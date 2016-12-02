@@ -75,7 +75,148 @@ My learning notes
       - 1.3.14.3 rspec parameter
     + 1.3.15 Debugging Rails Applications
 
+- 2. Rails with Active Record and Action Pack
+  * 2.1 Introduction to Active Record
+    + 2.1.1 Github Repository for Module 1
+    + 2.1.2 Recommended Books
+    + 2.1.3 Scaffolding
+    + 2.1.4 Database setup and SQLite
+    + 2.1.5 Introduction to Migration
+    + 2.1.6 Creating and Modifying Tables and Columns
+    + 2.1.7 Dynamic Dispatch
+    + 2.1.8 Dynamic Methods
+    + 2.1.9 Ghost Methods
+    + 2.1.10 Introduction to Active Record
+    + 2.1.11 Active Record CRUD
+      - 2.1.11.1 create
+      - 2.1.11.2 Retrive
+      - 2.1.11.3 Update
+      - 2.1.11.4 Delete
+  * 2.2 Deep Dive into Active Record
+    + 2.2.1 Github Repository for Module 2
+    + 2.2.2 Seeding the Database
+    + 2.2.3 SQL Fragments and Dangers of SQL Injection
+    + 2.2.4 Array and Hash Condition Syntax
+    + 2.2.5 Association
+      - 2.2.5.1 One-to-One Association
+      - 2.2.5.2 One-to-Many Association
+      - 2.2.5.3 Many-to-Many Association
+    + 2.2.6 Active Record Scopes
+    + 2.2.7 Validations
+    + 2.2.8 N+1 Queries Issue and DB Transactions
+      - 2.2.8.1 N+1 Queries
+      - 2.2.8.2 Transactions
+  * 2.3 Introduction to Action Pack
+    + 2.3.1 Github Repository for Module 2
+    + 2.3.2 Introduction to Action Pack
+    + 2.3.3 REST and Rails
+    + 2.3.4 Restful Actions
+      - 2.3.4.1 Index
+      - 2.3.4.2 Show
+      - 2.3.4.3 Destroy
+      - 2.3.4.4 New
+      - 2.3.4.5 Create
+      - 2.3.4.6 Edit
+      - 2.3.4.7 Update
+    + 2.3.5 Strong Parameters and Flash
+      - 2.3.5.1 Strong Parameters
+      - 2.3.5.2 Flash
+    + 2.3.6 Partials
+    + 2.3.7 Form Helpers and Layouts
+      - 2.3.7.1 Form Helpers
+      - 2.3.7.2 Layouts
+  * 2.4 Security and Nested Resources in Action Pack
+    + 2.4.1 Github Repository for Module 4
+    + 2.4.2 Nested Resources
+      - 2.4.2.1 Nested Resources - Controller
+      - 2.4.2.2 Nested Resources - view
+    + 2.4.3 Authentication
+    + 2.4.4 HTTP Sessions and Cookies
+    + 2.4.5 Sessions Controller and View
+    + 2.4.6 Authorization
+    + 2.4.7 Pagination
+    + 2.4.8 Deploying to Heroku and Enabling SSL
 
+- 3. Ruby on Rails Web Services and Integration with MongoDB
+  * 3.1 Introduction to MongoDB, MongoDB-Ruby API, and CRUD
+    + 3.1.1 Github Repository for Module 1
+    + 3.1.2 Introduction to NoSQL
+    + 3.1.3 Categories of NoSQL
+    + 3.1.4 Introduction to MongoDB
+    + 3.1.5 Mongo Installation
+    + 3.1.6 MongoDB Basics
+    + 3.1.7 Inserting Documents
+    + 3.1.8 Find
+    + 3.1.9 Paging
+    + 3.1.10 Advanced Find
+    + 3.1.11 Replace, Update, and Delete
+    + 3.1.12 Introduction: Integrating MongoDB with Ruby Driver
+    + 3.1.13 Rails Setup
+    + 3.1.14 DAO Class Infrastructure
+    + 3.1.15 CRUD
+    + 3.1.16 Scaffolding
+    + 3.1.17 MVC Application
+    + 3.1.18 MongoLab Setup
+    + 3.1.19 Heroku Setup
+  * 3.2 Aggregation Framework, Performance, and Advanced MongoDB
+    + 3.2.1 Github Repository for Module 2
+    + 3.2.2 $project
+    + 3.2.3 $group
+    + 3.2.4 $match
+    + 3.2.5 $unwind
+    + 3.2.6 Schema Design
+    + 3.2.7 Normalization
+    + 3.2.8 Relationships
+    + 3.2.9 GridFS
+    + 3.2.10 GridFS Demo 1
+    + 3.2.11 GridFS Demo 2
+    + 3.2.12 GridFS Demo 3
+    + 3.2.13 Geospatial
+    + 3.2.14 Geospatial Demo
+    + 3.2.15 Introduction to Indexes
+    + 3.2.16 Creating Indexes
+    + 3.2.17 Listing & Deleting Indexes
+    + 3.2.18 Unique, Sparse & TTL Indexes
+  * 3.3 Mongoid
+    + 3.3.1 Github Repository for Module 3
+    + 3.3.2 Introduction to Mongoid### 3.3.3 Document Class
+    + 3.3.4 Mongoid CRUD
+    + 3.3.5 Movie Application Setup
+    + 3.3.6 1:1 Embedded Relationship
+    + 3.3.7 M:1 Linked Relationship
+    + 3.3.8 1:M Embedded Relationship
+    + 3.3.9 M:1 Embedded Relationship
+    + 3.3.10 1:1 Linked Relationship
+    + 3.3.11 M:M Linked Relationship
+    + 3.3.12 Constraints and Validation
+    + 3.3.13 Constraints and Validation: Demo
+    + 3.3.14 Queries (Find)
+    + 3.3.15 Queries (Where)
+    + 3.3.16 Pluck and Scope
+    + 3.3.17 Scaffolding
+  * 3.4 Web Services
+    + 3.4.1 Github Repository for Module 4
+    + 3.4.2 Introduction to Web Services
+    + 3.4.3 REST and RMM
+    + 3.4.4 Resources
+    + 3.4.5 URIs
+    + 3.4.6 Nested URIs
+    + 3.4.7 Query Parameters
+    + 3.4.8 Methods
+    + 3.4.9 Idempotence
+    + 3.4.10 Representations
+    + 3.4.11 Versioning
+    + 3.4.12 Content Negotiations
+    + 3.4.13 Headers and Status
+    + 3.4.14 Client Caching
+    + 3.4.15 Cache Revalidation Headers
+    + 3.4.16 Cache Controls
+    + 3.4.17 Server Caching
+    + 3.4.18 OAuth2
+    + 3.4.19 Assembly
+    + 3.4.20 Devise
+    + 3.4.21 Integrated Authentication
+    + 3.4.22 OAuth Integration
 
 
 
