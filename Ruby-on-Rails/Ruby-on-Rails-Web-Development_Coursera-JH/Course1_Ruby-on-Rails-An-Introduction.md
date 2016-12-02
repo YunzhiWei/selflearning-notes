@@ -589,7 +589,7 @@ $ rbenv rehash
 
 
 
-* #### 1.2.3.2 Flow of Control
+#### 1.2.3.2 Flow of Control
 
 * if, elsif, else
 
