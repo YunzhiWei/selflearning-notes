@@ -144,7 +144,16 @@ My learning notes
     + 3.1.3 Categories of NoSQL
     + 3.1.4 Introduction to MongoDB
     + 3.1.5 Mongo Installation
+      - 3.1.5.1 Install MongoDB
+      - 3.1.5.2 Configure MongoDB
+      - 3.1.5.3 Start MongoDB - mongod
+      - 3.1.5.4 Launch MongoDB Shell - mongo
     + 3.1.6 MongoDB Basics
+      - 3.1.6.1 Importing sample data
+      - 3.1.6.2 Basics of MongoDB shell
+      - 3.1.6.3 MongoDB collections
+      - 3.1.6.4 IRB shell and MongoDB
+      - 3.1.6.5 Basic MongoDB command in IRB
     + 3.1.7 Inserting Documents
     + 3.1.8 Find
     + 3.1.9 Paging
