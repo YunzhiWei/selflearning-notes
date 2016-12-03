@@ -188,7 +188,16 @@ My learning notes
     + 3.2.18 Unique, Sparse & TTL Indexes
   * 3.3 Mongoid
     + 3.3.1 Github Repository for Module 3
-    + 3.3.2 Introduction to Mongoid### 3.3.3 Document Class
+    + 3.3.2 Introduction to Mongoid
+    + 3.3.3 Document Class
+      - 3.3.3.1 Documents
+      - 3.3.3.2 Fields
+      - 3.3.3.3 Timestamps
+      - 3.3.3.4 Mongo Field Type
+      - 3.3.3.5 Field Aliases
+      - 3.3.3.6 Customer Fields (Very Important) (to do more learning later)
+      - 3.3.3.7 store_in
+
     + 3.3.4 Mongoid CRUD
     + 3.3.5 Movie Application Setup
     + 3.3.6 1:1 Embedded Relationship

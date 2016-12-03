@@ -30,7 +30,116 @@
 
 ### 3.1.5 Mongo Installation
 
+#### 3.1.5.1 Install MongoDB
+
+* Download MongoDB (msi) from [here](https://www.mongodb.com/download-center)
+* Prepare for the DB folder (the default folder is C:\data\db)
+
+#### 3.1.5.2 Configure MongoDB
+
+#### 3.1.5.3 Start MongoDB - mongod
+
+**Please run this command in C:\data\db folder**
+
+```
+mongod
+```
+
+#### 3.1.5.4 Launch MongoDB Shell - mongo
+
+```
+mongo
+```
+
 ### 3.1.6 MongoDB Basics
+
+#### 3.1.6.1 Importing sample data
+
+* download [zips.json](http://media.mongodb.org/zips.json?_ga=1.42259692.837974793.1480646114) file from MongoDB
+* import data with the following command in **windows command shell**
+
+```
+C:\> mongoimport --db test --collection zips --drop --file zips.json
+```
+
+#### 3.1.6.2 Basics of MongoDB shell
+
+* Start mongo shell
+
+```
+C:\> mongo
+```
+
+* Switch to test Database
+
+```
+> use test
+```
+
+* find command
+
+```
+> db.zips.findOne()
+```
+
+#### 3.1.6.3 MongoDB collections
+
+* Collection Types
+  * Fixed-size
+
+  ```
+  db.createCollection("log", { capped : true, size : 5242880, max : 5000 } )
+  ```
+
+#### 3.1.6.4 IRB shell and MongoDB
+
+* mongo-ruby dirver
+
+```
+gem update -system
+gem install mongo
+gem install bson_ext
+```
+
+* Start IRB shell
+
+```
+> IRB
+```
+
+* Using gem in IRB
+
+```
+> require 'mongo'
+```
+
+* Set IRB log output level with the following command to get rid of debugging information
+
+```
+> Mongo::Logger.logger.level = ::Logger::INFO
+```
+
+* Connect to Mongo DB
+
+```
+> db = Mongo::Client.new('mongodb://localhost:27017')
+> db = db.use('test')
+```
+
+* Use system command in IRB shell
+
+```
+> system('cls')
+```
+
+#### 3.1.6.5 Basic MongoDB command in IRB
+
+```
+> db = db.use('test')
+> db.database.name
+> db.database.collection_names
+> db[:zips].find.first
+```
 
 ### 3.1.7 Inserting Documents
 
@@ -45,6 +154,69 @@
 ### 3.1.12 Introduction: Integrating MongoDB with Ruby Driver
 
 ### 3.1.13 Rails Setup
+
+#### 3.1.13.1 Rails Setup
+
+* Create new Application
+
+```
+rails new zips
+```
+
+* Add mongoid gem to Gemfile
+
+```
+gem 'mongoid', '~> 5.0.0'
+gem 'will_paginate', '~> 3.0.7'
+# add this extra Gemfile to add will_paginate support for mongoid
+gem 'will_paginate_mongoid', '~> 2.0.1'
+```
+
+* Run 'bundle' to install gem in the current project
+
+```
+bundle
+```
+
+* Mongo database configuration
+
+```
+rails g mongoid:config
+```
+
+**config/mongoid.yml** will be created by the above command.
+
+* Check mongoid.yml file about the database connection information
+
+* Check config/application.rb file (this is the bootstraps mongoid within application -- like rails console)
+
+```
+#bootstraps mongoid within applications -- like rails console
+Mongoid.load!('./config/mongoid.yml')
+
+#which default ORM are we using with scaffold
+#add  --orm none, mongoid, or active_record
+#    to rails generate cmd line to be specific
+# config.generators {|g| g.orm :active_record}
+#config.generators {|g| g.orm :mongoid}
+```
+
+#### 3.1.13.2 Test mongoid in rails console
+
+* In system shell, type the following command
+
+```
+rails c
+```
+
+* In rails console, type the following commands
+
+```
+> mongo_client=Mongoid::Clients.default
+> mongo_client.database.name
+> collection=mongo_client[:zips]
+> collection.count
+```
 
 ### 3.1.14 DAO Class Infrastructure
 
@@ -152,11 +324,128 @@
 
 
 
-### 3.3.2 Introduction to Mongoid### 3.3.3 Document Class
+### 3.3.2 Introduction to Mongoid
+
+### 3.3.3 Document Class
+
+#### 3.3.3.1 Documents
+
+* Documents are the **core** object in Mongoid
+
+```
+Mongid::Document
+```
+
+* Documents can be stored in a collection or embedded in other Documents
+
+```
+class Movie
+  include Mongoid::Documents
+end
+```
+
+#### 3.3.3.2 Fields
+
+* Fields are **attributes**, default type is Strings
+
+```
+class Movie
+  include Mongoid::Documents
+  field :title, type: String
+  field :type, type: String
+  field :rated, type: String
+  field :year, type: Integer
+end
+```
+
+* OS shell command to generate a model
+
+```
+rails g model
+```
+
+Example
+
+```
+rails g model Movie title type rated year:Integer rlease_date:date \
+                    runtime:Measurement votes:integer countries:array languages:array \
+                    genres:array filming_locations:arra metascore simple_plot:text \
+                    plot: text url_imdb url_poster directors:array actors:array
+```
+
+```
+rails g model Actor name birth_name date_of_birth:Date height:Measurement bio:text
+```
+
+#### 3.3.3.3 Timestamps
+
+* Include timestamp
+
+  ```
+class Movie
+  include Mongoid::Documents
+  include Mongoid::Timestamps
+end
+  ```
+
+  - created_at and updated_at fields will be added
+  - **touch** method will update the document's updated_at field
+
+#### 3.3.3.4 Mongo Field Type
+
+  - String
+  - Integer
+  - BigDecimal
+  - Float
+  - Boolean
+  - Time
+  - TimeWithZone
+  - DateTime
+  - Date
+  - Hash
+  - Array
+  - Symbol
+  - BSON
+  - Range
+  - Regexp
+
+#### 3.3.3.5 Field Aliases
+
+  ```
+class Movie
+  include Mongoid::Documents
+  ... ...
+  field :birthName, as: :birth_name, type: String
+  ... ...
+end
+  ```
+
+* birthName (camel case) in document -> mapped to birth_name (rails uses snake case) in model
+* Comply with rails naming convertion
+* Helps during compression
+
+#### 3.3.3.6 Customer Fields (Very Important) (to do more learning later)
+
+#### 3.3.3.7 store_in
+
 
 ### 3.3.4 Mongoid CRUD
 
 ### 3.3.5 Movie Application Setup
+
+```
+class Location
+  include Mongoid::Documents
+  ... ...
+  store_in collection: "places"
+  ... ...
+end
+```
+
+* Application type to Document type mapping
+* Location gets stored in to "places" collection
+
+
 
 ### 3.3.6 1:1 Embedded Relationship
 
@@ -259,7 +548,3 @@
 ### 3.4.21 Integrated Authentication
 
 ### 3.4.22 OAuth Integration
-
-
-
-
