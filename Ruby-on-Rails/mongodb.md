@@ -77,6 +77,30 @@ C:\> mongoimport --db test --collection zips --drop --file zips.json
 > db[:zips].find.first
 ```
 
+### Insert/Create
+
+* insert_one
+
+```
+db[:zips].insert_one(:_id=>"100", :city=>"city01", :loc=>[-74.05, 37.56], :pop=>4678, :state=>"MD")
+```
+
+* insert_many
+
+```
+db[:zips].insert_many([
+    {:_id=>"200", :city=>"city02", :loc=>[-74.05, 37.56], :pop=>2000, :state=>"CA")},  
+    {:_id=>"300", :city=>"city03", :loc=>[-74.05, 37.56], :pop=>3000, :state=>"CA")},  
+  ])
+```
+
+* find/count
+
+```
+db[:zips].find(:city=>"city01").count
+```
+
+
 # Rails console
 
 ```

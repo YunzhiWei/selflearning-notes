@@ -143,6 +143,35 @@ gem install bson_ext
 
 ### 3.1.7 Inserting Documents
 
+
+#### 3.1.7.1 insert_one
+
+```
+db[:zips].insert_one(:_id=>"100", :city=>"city01", :loc=>[-74.05, 37.56], :pop=>4678, :state=>"MD")
+```
+
+#### 3.1.7.2 insert_many
+
+```
+db[:zips].insert_many([
+    {:_id=>"200", :city=>"city02", :loc=>[-74.05, 37.56], :pop=>2000, :state=>"CA")},  
+    {:_id=>"300", :city=>"city03", :loc=>[-74.05, 37.56], :pop=>3000, :state=>"CA")},  
+  ])
+```
+
+* find/count
+
+```
+db[:zips].find(:city=>"city01").count
+```
+
+#### "\_id" field
+
+* primary key for every Document
+* default field for the BSON object and is indexed automatically
+* You can add a custom "id" filed if you like (but different from the default \_id)
+
+
 ### 3.1.8 Find
 
 ### 3.1.9 Paging

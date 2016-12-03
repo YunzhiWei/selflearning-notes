@@ -56,6 +56,28 @@ gem install mongo --source http://rubygems.org
 gem install rake --source http://rubygems.org
 ```
 
+## Install DevKit
+
+You may see the following error when running 'bundle install'
+
+```
+Gem::InstallError: The 'json' native gem requires installed build tools.
+
+Please update your PATH to include build tools or download the DevKit
+from 'http://rubyinstaller.org/downloads' and follow the instructions
+at 'http://github.com/oneclick/rubyinstaller/wiki/Development-Kit'
+
+An error occurred while installing json (1.8.3), and Bundler cannot continue.
+Make sure that `gem install json -v '1.8.3'` succeeds before bundling.
+```
+
+To solve the problem
+
+* Download from [here](http://rubyinstaller.org/downloads)
+* Instruction [here](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit)
+
+##
+
 # Environment Configure
 
 ## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.13 Rails Setup
