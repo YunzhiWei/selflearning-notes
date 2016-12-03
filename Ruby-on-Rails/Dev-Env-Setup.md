@@ -87,3 +87,5 @@ You many need to change the source in the Gemfile as the following if you run bu
 ```
 source 'http://gems.ruby-china.org'
 ```
+
+## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.3.17 Scaffolding

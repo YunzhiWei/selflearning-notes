@@ -253,6 +253,39 @@ rails c
 
 ### 3.1.16 Scaffolding
 
+#### 3.1.16.1 Model mixin
+
+```
+class Zip
+  include ActiveModel::Model
+  ... ...
+  def persisted?
+    !@id.nil?
+  end
+  def created_at
+    nil
+  end
+  def updated_at
+    nil
+  end
+```
+
+#### 3.1.16.2 Scaffold command
+
+```
+rails g Scaffold_controller Zip id city state population:integer
+```
+
+#### 3.1.16.3 Helpers
+
+```
+module ZipHelper
+  def toZip(value)
+    return value.is_a?(Zip) ? value : Zip.new(value)
+  end
+end
+```
+
 ### 3.1.17 MVC Application
 
 ### 3.1.18 MongoLab Setup
@@ -398,8 +431,8 @@ Example
 ```
 rails g model Movie title type rated year:Integer rlease_date:date \
                     runtime:Measurement votes:integer countries:array languages:array \
-                    genres:array filming_locations:arra metascore simple_plot:text \
-                    plot: text url_imdb url_poster directors:array actors:array
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
 ```
 
 ```
@@ -457,11 +490,6 @@ end
 
 #### 3.3.3.7 store_in
 
-
-### 3.3.4 Mongoid CRUD
-
-### 3.3.5 Movie Application Setup
-
 ```
 class Location
   include Mongoid::Documents
@@ -475,6 +503,51 @@ end
 * Location gets stored in to "places" collection
 
 
+### 3.3.4 Mongoid CRUD
+
+### 3.3.5 Movie Application Setup
+
+#### 3.3.5.1 Initialization
+
+* Import data
+
+```
+rake db:seed
+```
+
+json files in the 'db' folder
+
+* Setup index
+
+```
+rake db:mongoid:create_indexes
+```
+
+index information is stored in the model class
+
+```
+class Location
+  include Mongoid::Documents
+  ... ...
+  index ({ :"place_of_birth.geolocation" => Mongo::Index::GEO2DSPHERE})
+  ... ...
+end
+```
+
+#### 3.3.5.2 Customer Types (Import) (to do more learning)
+
+#### 3.3.5.3 Model Types and Document Representations
+
+* Place
+* Actor
+* Writer
+* Director
+* Movie
+
+#### 3.3.5.4 Document Model Class
+
+* DirectorRef - is an **annotated** reference to a Director
+* MovieRole - is a charactor in a **Movie** played by an **Actor**
 
 ### 3.3.6 1:1 Embedded Relationship
 
@@ -500,9 +573,169 @@ end
 
 ### 3.3.17 Scaffolding
 
+#### 3.3.17.1 Basic Steps
+
+* OS command shell
+
+```
+> rails new Movies
+> cd movies
+```
+
+* Update Gemfile
+
+```
+gem 'mongoid', '~> 5.0.0'
+```
+
+* bundle
+
+```
+> bundle
+```
+
+* Generate mongoid.yml
+
+```
+> rails g mongoid:config config/mongoid.yml
+```
+
+* Start the Server
+
+```
+> rails s
+```
+
+#### 3.3.17.2 Custom Class and Methods
+
+* Measurement
+* Point
+* initialize - normalized form -- independent of source formats
+* to_s - useful in producing formatted output
+* mongoize - creates a DB form of the instance
+* self.demongoize(object) - creates an instance of the class from the DB-form of the data
+* self.mongoize(object) - takes in all forms of the object and produces a DB-friendly form
+* self.evolve(object) - used by criteria to convert object to DB-friendly form
+
+#### 3.3.17.3 Scaffolding (Important) (to do more learning)
+
+* Note: mongoid is the default model generator.
+  - To be explicit at command time, add the **--orm mongoid** option to the command line.
+
+##### model
+
+* Place
+
+Place models a point and its descriptive address information
+
+```
+rails g model Place formatted_address geolocation:Point street_number street_name city postal_code county state country
+```
+
+* Director
+
+Director models the detailed information of a movie director
+
+```
+rails g model Director name
+```
+
+* DirectorRef
+
+DirectorRef is an annotated reference to a director taht gets embedded into the Movie
+
+```
+rails g model DirectorRef name
+```
 
 
+* Writer
 
+Writer holds the detailed information about the writer of a Movie
+This class is directly associated with the movie without an annotated link
+
+```
+rails g model Writer name
+```
+
+* Actor
+
+Actor contains the information details of and actor in a Movie
+
+```
+rails g model Actor name birth_name date_of_birth:Date height:Measurement bio:text
+```
+
+
+* MovieRole
+
+MovieRole holds the role-specific information and relation between the Movie and Actor
+
+```
+rails g model MovieRole character actor_name main:boolean url_character url_photo url_profile
+```
+
+
+* Movie
+
+Movie holds the role information about Movie, its properties, and supporting members
+
+```
+rails g model Movie title type rated year:Integer rlease_date:date \
+                    runtime:Measurement votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+
+##### Controller and View - Assembly
+
+```
+rails g Scaffold_controller Movie title type rated year:Integer rlease_date:date \
+                    runtime:integer votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+
+```
+rails g Scaffold_controller Movie title type rated year:Integer rlease_date:date \
+                    runtime:integer votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+
+```
+rails g Scaffold_controller Movie title type rated year:Integer rlease_date:date \
+                    runtime:integer votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+
+```
+rails g Scaffold_controller Movie title type rated year:Integer rlease_date:date \
+                    runtime:integer votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+
+```
+rails g Scaffold_controller Movie title type rated year:Integer rlease_date:date \
+                    runtime:integer votes:integer countries:array languages:array \
+                    genres:array filming_locations:array metascore simple_plot:text \
+                    plot:text url_imdb url_poster directors:array actors:array
+```
+
+#### 3.3.17.4 Routes
+
+* routes.rb
+
+```
+resources :movies
+```
 
 ## 3.4 Web Services
 

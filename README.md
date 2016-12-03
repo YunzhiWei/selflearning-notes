@@ -164,6 +164,9 @@ My learning notes
     + 3.1.14 DAO Class Infrastructure
     + 3.1.15 CRUD
     + 3.1.16 Scaffolding
+      - 3.1.16.1 Model mixin
+      - 3.1.16.2 Scaffold command
+      - 3.1.16.3 Helpers
     + 3.1.17 MVC Application
     + 3.1.18 MongoLab Setup
     + 3.1.19 Heroku Setup
@@ -197,9 +200,12 @@ My learning notes
       - 3.3.3.5 Field Aliases
       - 3.3.3.6 Customer Fields (Very Important) (to do more learning later)
       - 3.3.3.7 store_in
-
     + 3.3.4 Mongoid CRUD
     + 3.3.5 Movie Application Setup
+      - 3.3.5.1 Initialization
+      - 3.3.5.2 Customer Types (Import) (to do more learning)
+      - 3.3.5.3 Model Types and Document Representations
+      - 3.3.5.4 Document Model Class
     + 3.3.6 1:1 Embedded Relationship
     + 3.3.7 M:1 Linked Relationship
     + 3.3.8 1:M Embedded Relationship
@@ -212,6 +218,10 @@ My learning notes
     + 3.3.15 Queries (Where)
     + 3.3.16 Pluck and Scope
     + 3.3.17 Scaffolding
+      - 3.3.17.1 Basic Steps
+      - 3.3.17.2 Custom Class and Methods
+      - 3.3.17.3 Scaffolding
+      - 3.3.17.4 Routes
   * 3.4 Web Services
     + 3.4.1 Github Repository for Module 4
     + 3.4.2 Introduction to Web Services
