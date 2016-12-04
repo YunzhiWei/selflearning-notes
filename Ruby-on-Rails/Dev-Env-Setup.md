@@ -1,11 +1,12 @@
-# Software installation
+# 1. Software installation
 
-## Course1_Ruby-on-Rails-An-Introduction - 1.1.3
+## 1.1 Course1_Ruby-on-Rails-An-Introduction - 1.1.3
 
 * Ruby
 * Rails
 
 Install Rails with the following command
+
 ```
 gem install rails -v 4.2.3
 ```
@@ -36,8 +37,9 @@ bundle 命令也存在同样问题，用上述方法加以解决。
 * Git
 * phantomjs
 
-## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.5 Mongo Installation
-## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.6.4 IRB shell and MongoDB
+## 1.2 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.5 Mongo Installation
+
+## 1.3 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.6.4 IRB shell and MongoDB
 
 * mongo-ruby dirver
 
@@ -56,7 +58,7 @@ gem install mongo --source http://rubygems.org
 gem install rake --source http://rubygems.org
 ```
 
-## Install DevKit
+## 1.4 Install DevKit
 
 You may see the following error when running 'bundle install'
 
@@ -76,11 +78,17 @@ To solve the problem
 * Download from [here](http://rubyinstaller.org/downloads)
 * Instruction [here](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit)
 
-##
 
-# Environment Configure
+# 2. Create New Project
 
-## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.13 Rails Setup
+## 2.1 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.13 Rails Setup
+
+* rails new <project name>
+* cd <project folder>
+* Update Gemfile
+* bundle
+* create config/mongoid.yml
+* include mongoid.yml in config/application.rb
 
 You many need to change the source in the Gemfile as the following if you run bundle in China
 
@@ -88,4 +96,14 @@ You many need to change the source in the Gemfile as the following if you run bu
 source 'http://gems.ruby-china.org'
 ```
 
-## Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.3.17 Scaffolding
+# 3. Scaffolding
+
+## 3.1 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.3.17 Scaffolding
+
+## 3.2 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.16.2 Scaffold command
+
+* rails g model
+* rails g Scaffold_controller
+* routes
+
+# 4. Heroku

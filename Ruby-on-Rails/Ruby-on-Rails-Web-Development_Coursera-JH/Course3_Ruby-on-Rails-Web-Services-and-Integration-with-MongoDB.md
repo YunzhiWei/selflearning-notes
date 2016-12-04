@@ -217,7 +217,7 @@ rails g mongoid:config
 
 * Check mongoid.yml file about the database connection information
 
-* Check config/application.rb file (this is the bootstraps mongoid within application -- like rails console)
+* Check **config/application.rb** file (this is the bootstraps mongoid within application -- like rails console)
 
 ```
 #bootstraps mongoid within applications -- like rails console
@@ -227,7 +227,7 @@ Mongoid.load!('./config/mongoid.yml')
 #add  --orm none, mongoid, or active_record
 #    to rails generate cmd line to be specific
 # config.generators {|g| g.orm :active_record}
-#config.generators {|g| g.orm :mongoid}
+# config.generators {|g| g.orm :mongoid}
 ```
 
 #### 3.1.13.2 Test mongoid in rails console
@@ -292,7 +292,11 @@ end
 
 ### 3.1.19 Heroku Setup
 
+* mongoid.yml
 
+```
+uri: <%= ENV[MONGOLAB_URI] %>
+```
 
 ## 3.2 Aggregation Framework, Performance, and Advanced MongoDB
 
