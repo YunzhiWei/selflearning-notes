@@ -106,4 +106,18 @@ source 'http://gems.ruby-china.org'
 * rails g Scaffold_controller
 * routes
 
-# 4. Heroku
+# 4. Prepare the data in mLab
+
+* [mLab](https://mlab.com/) is prety simple and straight forward
+* Prepare one database and create one or more collections there
+* Use the 'Tools' menu to import raw data into the colletions
+
+# 5. Heroku
+
+* Create your own app in [Heroku](https://heroku.com)
+* You may need to install **Heroku CLI**
+* You may also need to add **Environment Variable** into your OS and Heroku
+
+## Course1_Ruby-on-Rails-An-Introduction - 1.3.13 Deploy to Heroku
+
+## Course2_Rails-with-Active-Record-and-Action-Pack - 2.4.8 Deploying to Heroku and Enabling SSL

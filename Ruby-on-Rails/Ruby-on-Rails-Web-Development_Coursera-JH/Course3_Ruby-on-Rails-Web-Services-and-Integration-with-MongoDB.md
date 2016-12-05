@@ -292,10 +292,16 @@ end
 
 ### 3.1.19 Heroku Setup
 
-* mongoid.yml
+* mongoid.yml (to use Environment Variable)
 
 ```
-uri: <%= ENV[MONGOLAB_URI] %>
+uri: <%= ENV['MONGOLAB_URI'] %>
+```
+
+* set Environment Variable in Heroku
+
+```
+> heroku config:add MONGOLAB_URI=mongodb://<dbuser>:<dbpassword>@ds017205.mlab.com:17205/universal
 ```
 
 ## 3.2 Aggregation Framework, Performance, and Advanced MongoDB
