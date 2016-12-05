@@ -2152,7 +2152,7 @@
 
 * Partials are similar to regular templates, but they have a more **refined** set of capabilities.
 
-* Named with **underscore** (_) as the leading character
+* Named with **underscore** \(\_\) as the leading character
 
 * Rendered with **render** 'particalname' (no underscore)
 
@@ -2173,7 +2173,7 @@
   <%= render @posts %>
   ```
 
-  * _is equivalent to_
+  * \_is equivalent to\_
 
   ```
   <% @posts.each do |post| %>
@@ -2181,30 +2181,30 @@
   <% end %>
   ```
 
-* _form.html.erb - **display errors**
+* \_form.html.erb - **display errors**
 
   ```
   <%= form_for(@post) do |f| %>
-    <% if @car.errors.any? %> 
-      <div id="error_explanation"> 
-        <h2><%= pluralize(@car.errors.count, "error") %> prohibited this car from being saved:</h2> 
-        <ul> 
-          <% @post.errors.full_messages.each do |message| %> 
-            <li><%= message %></li> 
-          <% end %> 
-        </ul> 
-      </div> 
-    <% end %> 
-    <div class="field"> 
-      <%= f.label :title %><br> 
-      <%= f.text_field :title %> 
-    </div> 
-    <div class="field"> 
-      <%= f.label :content %><br> 
-      <%= f.text_area :content %> 
-    </div> 
-    <div class="actions"> 
-      <%= f.submit %> 
+    <% if @car.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@car.errors.count, "error") %> prohibited this car from being saved:</h2>
+        <ul>
+          <% @post.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="field">
+      <%= f.label :title %><br>
+      <%= f.text_field :title %>
+    </div>
+    <div class="field">
+      <%= f.label :content %><br>
+      <%= f.text_area :content %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
     </div>
   <% end %>
   ```
@@ -2228,7 +2228,7 @@
 
 #### 2.3.7.1 Form Helpers
 
-* _form.html.erb
+* \_form.html.erb
 
   ```
   <%= form_for(@post) do |f| %>
@@ -2249,7 +2249,7 @@
   * The text on the button is decided based on the persist attribute of the object (@post here), unless you define the text yourself.
 
 
-* form_for
+* form\_for
   * Generate a **form tag** for passed in object
   * Unlike a regular HTML form, Rails uses **POST** by default.
 
@@ -2265,7 +2265,7 @@
    </div>
    ```
 
-* f.text_field
+* f.text\_field
   * Generates input type="text" field
   * Use **:placeholder** hash entry to specify a placeholder (hint) to be displayed inside the field untile the user provideds a value.
 
@@ -2277,7 +2277,7 @@
   ```
 
 
-* f.text_area
+* f.text\_area
   * Similiar to **f.text_field**, but for a text area instead of a text field input (default: 40 cols X 20 rows)
   * Can specify a different size (cols X rows) with a **:size** attribute
 
@@ -2291,12 +2291,12 @@
 
 * Data Helpers
 
-  * f.date_select
+  * f.date\_select
     * Set of select tags (year, month, day) pre-selected for accessing an attribute in the DB. Many formatting options **f.time_select**
 
   * f.datetime_select
 
-  * distance_of_time_in_words_to_now
+  * distance\_of\_time\_in\_words\_to\_now
 
   * Many more ...
 
@@ -2308,12 +2308,12 @@
 
   Some of these are browser-dependent. Will take advantage of the browsers that are ready for prime time and will still look okay in others.
 
-  * search_field
-  * telephone_field
-  * url_field
-  * email_field
-  * number_field
-  * range_field
+  * search\_field
+  * telephone\_field
+  * url\_field
+  * email\_field
+  * number\_field
+  * range\_field
 
 
 * f.submit
@@ -2542,7 +2542,7 @@
   ```
 
 
-* views/notes/_note.html.erb **partial**
+* views/notes/\_note.html.erb **partial**
 
   ```
   <div class="note">
@@ -2717,7 +2717,7 @@
 
 * HTTP is a stateless protocol
 
-  * Each new request even from the same browser **knows nothing* about the previous request.
+  * Each new request even from the same browser **knows nothing** about the previous request.
   * After a user makes a request, he will be treated as unknown on all the subsequent requests
 
 
@@ -2793,10 +2793,10 @@
   <% end %>
   ```
 
-  * form_for, is using **:reviewer** template, and will sent **post** request to **url: session_path** (**session** controller's **create** action)
-   
+  * form\_for, is using **:reviewer** template, and will sent **post** request to **url: session_path** \(**session** controller's **create** action\)
 
-* sessions_controller.rb
+
+* sessions\_controller.rb
 
   ```
   class SessionsController < ApplicationController
@@ -2824,12 +2824,12 @@
 
 * Locking down the application
 
-  * Place **before_action** in the **ApplicationController** (from which all the other controllers **inherit**) that will **make you login** if you are not yet logged in 
-  * But we cannot block everything. For example, the login page. 
+  * Place **before_action** in the **ApplicationController** (from which all the other controllers **inherit**) that will **make you login** if you are not yet logged in
+  * But we cannot block everything. For example, the login page.
   * Place **skip_before_action** to **override** the **before_action** in those special controllers
 
 
-* application_controller.rb
+* application\_controller.rb
 
   ```
   class ApplicationController < ActionController::Base
@@ -2845,7 +2845,7 @@
   ```
 
 
-* sessions_controller.rb
+* sessions\_controller.rb
 
   ```
   class SessionsController < ApplicationController
@@ -2919,7 +2919,7 @@
   * **SOLUTION**: go back to the **BooksController** and **scope things down** based on the **current_user** (instance of **Reviewer**)
 
 * Authorization - index, new, create
-  * books_controller.rb
+  * books\_controller.rb
 
   ```
   class BooksController < ApplicationController
@@ -2984,7 +2984,7 @@
 * Clear the cookies in your browser
 
 
-* books_controller.rb
+* books\_controller.rb
 
   ```
   class BooksController < ApplicationController
