@@ -106,6 +106,13 @@ source 'http://gems.ruby-china.org'
 * rails g Scaffold_controller
 * routes
 
+**Important**
+The Timestamps must be added, else .json will not work correctly
+
+```
+include Mongoid::Timestamps
+```
+
 # 4. Prepare the data in mLab
 
 * [mLab](https://mlab.com/) is prety simple and straight forward
