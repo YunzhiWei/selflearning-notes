@@ -1,6 +1,12 @@
 # About
 My learning notes
 
+# Temporaty information
+
+it is hard to install npm package some time. In this case, you may consider the following tool.
+This tool will install your packages one by one.
+https://www.npmjs.com/package/npm-install-que
+
 # Content
 
 
