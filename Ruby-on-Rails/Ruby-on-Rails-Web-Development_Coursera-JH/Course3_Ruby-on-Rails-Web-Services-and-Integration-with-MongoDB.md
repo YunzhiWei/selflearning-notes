@@ -346,9 +346,64 @@ uri: <%= ENV['MONGOLAB_URI'] %>
 
 ### 3.2.6 Schema Design
 
+#### Document store - mapping
+
+| RDBMS | MongoDB |
+| --- | --- |
+| Database | Database |
+| Table, View | Collection |
+| Row | JSON Document |
+| Column | Field |
+| Index | Index |
+| Join | Embedded Document / Linking across Document |
+| Foreign Key | Reference |
+| Partition Key | Shared |
+
+#### MongoDB - BSON Types
+
+* BSON - binary serialization format used to store documents and make remote procedure calls in MongoDB
+
+| Name | BSON Type |
+| String | Characters (UTF-8) |
+| Integer | Numberic value (32 or 64 bits) |
+| Boolean | True/False |
+| Double | Decimal numbers |
+| Min/Max | can be used to compare against lowest and highest value |
+| Arrays | List of values |
+| Timestamp | Time (added/updated) |
+| Object | Embedded documents |
+| Null | Null values |
+| Symbol | Similar to String ("ef#12") |
+| Date | Date/Time (Unix Format) |
+| Object Id | Document's id |
+| Binary Data | Store binary data |
+| Code | Java Script |
+| Regular Expression | Store regular expression (/%path%) |
+
+#### MongoDB - Schema Design
+
+* Support **Rich** documents
+  - Embedded / Linked data (joins)
+  - No constraints (no Foreign Key) - makes it very flexible
+
 ### 3.2.7 Normalization
 
+* 关系型数据库的 3 范式，拆表
+
 ### 3.2.8 Relationships
+
+* Relationships
+  - One to one
+  - One to many
+  - Many to many
+
+* Design approaches
+  - Embedding
+    + Similar to pre-joins
+    + Easy to handle for clients
+
+  * Linking
+    + Flexible, but extra work at application level
 
 ### 3.2.9 GridFS
 
@@ -374,10 +429,7 @@ uri: <%= ENV['MONGOLAB_URI'] %>
 
 ## 3.3 Mongoid
 
-
-
 ### 3.3.1 Github Repository for Module 3
-
 
 
 * Github repository for Module 3 -
@@ -397,6 +449,33 @@ uri: <%= ENV['MONGOLAB_URI'] %>
 
 
 ### 3.3.2 Introduction to Mongoid
+
+#### Concept
+
+* Object-Document-Mapper (ODM) for MongoDB written in Ruby
+* Mix of Active Record and MongoDB's schema-less and performance document-based Design
+* Dynamic queries, and atomic modifier operations
+
+#### Installation
+
+* Gemfile
+
+```
+gem 'mongoid', '~> 5.0.1'
+```
+
+#### Configuration
+
+* rails generator
+
+```
+rials g mongoid:config
+```
+
+* mongoid.yml
+
+<app name>/config/mongoid.yml
+
 
 ### 3.3.3 Document Class
 
@@ -498,6 +577,12 @@ end
 
 #### 3.3.3.6 Customer Fields (Very Important) (to do more learning later)
 
+* 5 methods in total
+
+  - initialize
+  - mongoize (instance method)
+  - mongoize, demongoize, evolve (class methods)
+
 #### 3.3.3.7 store_in
 
 ```
@@ -514,6 +599,82 @@ end
 
 
 ### 3.3.4 Mongoid CRUD
+
+#### create
+
+* Model.create
+
+```
+movie = Movie.create(
+  title: "Martian",
+  type: "Thriller",
+  rated: "R",
+  year: 2015
+  )
+```
+
+* Model.new
+
+```
+movie = Movie.new(
+  title: "Rocky",
+  type: "Action",
+  rated: "R",
+  year: 1975
+  )
+movie.save
+```
+
+#### find
+
+#### update
+
+* object.field =  and object.save
+
+```
+movie = Movie.new(
+  title: "Rocky",
+  type: "Action",
+  rated: "R",
+  year: 1975
+  )
+movie.save
+
+movie.year = 1986
+movie.save
+```
+
+* object.update_attributes
+
+```
+movie = Movie.new(
+  title: "Rocky31",
+  rated: "PG-13",
+  )
+
+movie.update_attributes(:rated => "R")
+```
+
+#### upsert
+
+* If document exists - will get overwritten
+* If document doesn't exist - will get inserted
+
+```
+movie = Movie.create(
+  title: "Rocky31",
+  rated: "PG-13",
+  )
+
+Movie.new(:_id=>"<ID>", :rated => "R", :title=>"Rocky31", :rated=>"R")
+.upsert
+
+```
+
+#### delete
+
+* object.delete
+* Model.delete_all
 
 ### 3.3.5 Movie Application Setup
 
@@ -546,6 +707,9 @@ end
 
 #### 3.3.5.2 Customer Types (Import) (to do more learning)
 
+* Measurement
+* Point
+
 #### 3.3.5.3 Model Types and Document Representations
 
 * Place
@@ -553,11 +717,17 @@ end
 * Writer
 * Director
 * Movie
-
-#### 3.3.5.4 Document Model Class
-
 * DirectorRef - is an **annotated** reference to a Director
 * MovieRole - is a charactor in a **Movie** played by an **Actor**
+
+#### Relationships
+
+* 1:1 Embedded        (Actor       -> place_of_birth: Place)
+* M:1 Linked          (Director    -> residence:      Place)
+* 1:M Embedded        (Movie      <-> roles:          MovieRole)
+* M:1 Embedded Linked (MovieRole  <-> Actor)
+* 1:1 Linked          (Movie       -> sequel_to:      Movie)
+* M:M                 (Movie      <-> writers:        Writer)
 
 ### 3.3.6 1:1 Embedded Relationship
 
