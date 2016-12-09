@@ -125,6 +125,8 @@ include Mongoid::Timestamps
 * You may need to install **Heroku CLI**
 * You may also need to add **Environment Variable** into your OS and Heroku
 
-## Course1_Ruby-on-Rails-An-Introduction - 1.3.13 Deploy to Heroku
+## 3.3 Course1_Ruby-on-Rails-An-Introduction - 1.3.13 Deploy to Heroku
 
-## Course2_Rails-with-Active-Record-and-Action-Pack - 2.4.8 Deploying to Heroku and Enabling SSL
+## 3.4 Course2_Rails-with-Active-Record-and-Action-Pack - 2.4.8 Deploying to Heroku and Enabling SSL
+
+## 3.5 Course3_Ruby-on-Rails-Web-Services-and-Integration-with-MongoDB - 3.1.19 Heroku Setup
