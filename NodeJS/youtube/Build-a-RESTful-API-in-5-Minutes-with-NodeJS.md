@@ -150,3 +150,25 @@ module.exports = router;
 ```
 
 * test with PostMan (Get, Post, Put)
+
+  - Get
+  browser url: localhost:3000/api/products
+
+  - Post with PostMan
+  url: localhost:3000/api/products
+  body:
+  {
+	"name": "Product 1",
+	"sku": "XYZ12345",
+	"price": 125.00
+  }
+
+  - Put
+  url: localhost:3000/api/products/584f48d013b1f92dd88aeb75
+  body:
+  {
+	"name": "Cool Product",
+  }
+
+  - Delete
+  url: localhost:3000/api/products/584f48d013b1f92dd88aeb75
