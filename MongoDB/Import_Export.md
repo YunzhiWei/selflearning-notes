@@ -118,6 +118,12 @@ connected to: id.mongolab.com:47307
 Wed Apr 10 13:26:12 imported 10903 objects
 ```
 
+## 3 Real Case
+
+```
+mongoexport -h ds133418.mlab.com:33418 -d resortplace -c spots -u resortplace -p cncn -o wuxi.json -f "spot_name,spot_star,spot_addr" -q "{root_url: {$regex: '.*wuxi.*'}}"
+```
+
 ## References
 
 [MongoDB Official Doc – Importing and Exporting MongoDB Data](http://docs.mongodb.org/manual/core/import-export/)
