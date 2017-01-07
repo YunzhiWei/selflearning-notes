@@ -9,9 +9,14 @@ Password: wife 10 digital complex
 Server Name:  OpenVZVPS-20161025611
 IP:  172.247.39.100
 SSH Port: ChinaNetCloud Standard\
+40022
 
 **搬瓦工** 也提供虚机
 
+## SSH 登陆 Xshell
+
+* user: root
+* password: wife 10 digital
 
 ## Install ShadowSocks Service
 
