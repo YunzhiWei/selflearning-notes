@@ -65,6 +65,21 @@
 
 > https://app.keymetrics.io/#/bucket/5a7faf922d51188490bc7ced/dashboard
 
+4. install redis
+
+```
+[root@ ~]# wget http://download.redis.io/releases/redis-4.0.8.tar.gz
+[root@ ~]# tar xzf redis-4.0.8.tar.gz
+[root@ ~]# cd redis-4.0.8
+[root@ redis-4.0.8]# make
+```
+
+5. start redis server
+
+```
+[root@ redis-4.0.8]# ./src/redis-server
+```
+
 
 ## 20180210
 
