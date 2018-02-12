@@ -1,5 +1,150 @@
 # dev env setup
 
+## 20180212
+
+1. create a new user
+
+```
+[root@ ~]# useradd –d /usr/postgres -m postgres
+```
+
+2. set group
+
+```
+[root@ ~]# usermod –g root postgres
+```
+
+3. change password
+
+```
+[root@ ~]# passwd postgres
+```
+
+4. change user
+
+```
+[root@ ~]# su postgres
+[postgres@ root]$ su root
+```
+
+5. install postgresql
+
+[valuable to read about initdb](https://www.cnblogs.com/think8848/p/5877076.html)
+[CentOS 7 with PG 9.6](http://www.linuxidc.com/Linux/2017-10/147536.htm)
+
+```
+[root@ ~]# yum install https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+[root@ ~]# yum install postgresql96
+[root@ ~]# yum install postgresql96-server
+[root@ ~]# 
+```
+
+> postgresql will be installed in the folder of '/usr/pgsql-9.6'.
+> postgresql will use the folder '/var/lib/pgsql/9.6/data' as database data folder.
+
+6. initial postgresql
+
+```
+[root@ ~]# /usr/pgsql-9.6/bin/postgresql96-setup initdb
+[root@ ~]# systemctl enable postgresql-9.6
+[root@ ~]# systemctl start postgresql-9.6
+```
+
+7. check postgresql status
+
+```
+[root@ ~]# systemctl start postgresql-9.6
+```
+
+8. go into interactive mode with user account of 'postgres'
+
+```
+[root@ ~]# su postgres
+[postgres@ root]$ psql
+```
+
+9. list all database
+
+```
+postgres=# \l
+```
+
+10. change postgres password
+
+```
+postgres=# alter user postgres with password '123456';
+```
+
+11. create a new database, a new user and grant authentication
+
+* Option 1
+
+```
+postgres=# CREATE DATABASE awardapply;
+postgres=# CREATE USER awardapply LOGIN PASSWORD '123456';
+postgres=# GRANT ALL ON DATABASE awardapply TO awardapply;
+```
+
+* Option 2
+
+```
+postgres=# DROP USER awardapply;
+postgres=# DROP DATABASE awardapply;
+postgres=# CREATE USER awardapply WITH PASSWORD '123456';
+postgres=# CREATE DATABASE awardapply OWNER awardapply;
+postgres=# GRANT ALL PRIVILEGES ON awardapply TO awardapply;
+```
+
+12. quit
+
+```
+postgres=# \q
+```
+
+13. update config and restart pg service
+
+```
+[root@ ~]# vim /var/lib/pgsql/9.6/data/pg_hba.conf
+```
+
+> original config: 		local   all             all                                     peer
+> new config (trust):   local   all             all                                     trust
+> new config (password):local   all             all                                     md5
+
+```
+[root@ ~]# systemctl restart postgresql-9.6
+```
+
+14. login again (without the last step, this step will fail)
+
+```
+[postgres@ root]$ psql -U awardapply -d awardapply
+```
+
+15. other pg command
+
+```
+postgres=# \c postgres
+postgres=# \d
+```
+
+> \c to change db
+> \d to list all tables
+
+16. install other lib
+
+```
+[root@ ~]# yum install postgresql96-contrib
+```
+
+17. create extension
+
+```
+[root@ ~]# psql -U awardapply -d awardapply
+awardapply=# create extension ltree;
+awardapply=# create extension "pgcrypto";
+```
+
 ## 20180211
 
 1. install pm2
@@ -142,3 +287,20 @@ export PATH=$NODE_PATH/bin:$PATH
 * :w [file name] - 以 file name 为文件名存盘
 * :wq 存盘并退出
 * :q! 强制退出不存盘
+
+# Linux
+
+## User & Group
+
+```
+[root@ ~]# groups
+[root@ ~]# groups [user name]
+[root@ ~]# whoami
+```
+
+```
+[root@ ~]# less /etc/group
+[root@ ~]# less /etc/shadow
+[root@ ~]# less /etc/passwd
+```
+
