@@ -145,6 +145,24 @@ awardapply=# create extension ltree;
 awardapply=# create extension "pgcrypto";
 ```
 
+18. check encoding
+
+```
+awardapply=# show client_encoding;
+```
+
+```
+[root@ ~]# vim /var/lib/pgsql/9.6/data/postgresql.conf
+```
+
+```
+C:\Program Files\PostgreSQL\9.6\data
+```
+
+> to make sure the lc_messages, lc_monetary, lc_numeric and lc_time are 'en_US.UTF-8'
+
+[to understand pg encoding](https://www.cnblogs.com/winkey4986/p/6279243.html)
+
 ## 20180211
 
 1. install pm2
