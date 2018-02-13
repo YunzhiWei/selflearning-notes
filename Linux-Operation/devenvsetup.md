@@ -1,5 +1,24 @@
 # dev env setup
 
+## 20180213
+
+```
+[root@ ~]# cd projects
+[root@ projects]# touch clb.sh
+[root@ projects]# vim clb.sh
+[root@ projects]# sh clb.sh
+```
+
+> clb.sh:
+
+```
+#!/bin/bash
+#publish service and api
+
+git clone https://YunzhiWei@github.com/Clare-Huang/awardapply-backend.git
+```
+
+
 ## 20180212
 
 1. create a new user
@@ -92,7 +111,7 @@ postgres=# DROP USER awardapply;
 postgres=# DROP DATABASE awardapply;
 postgres=# CREATE USER awardapply WITH PASSWORD '123456';
 postgres=# CREATE DATABASE awardapply OWNER awardapply;
-postgres=# GRANT ALL PRIVILEGES ON awardapply TO awardapply;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE awardapply TO awardapply;
 ```
 
 12. quit
@@ -104,12 +123,56 @@ postgres=# \q
 13. update config and restart pg service
 
 ```
+[root@ ~]# vim /var/lib/pgsql/9.6/data/postgresql.conf
+```
+
+```
+listen_addresses = '*'
+port = 5432
+password_encryption = on
+```
+
+```
 [root@ ~]# vim /var/lib/pgsql/9.6/data/pg_hba.conf
 ```
 
-> original config: 		local   all             all                                     peer
-> new config (trust):   local   all             all                                     trust
-> new config (password):local   all             all                                     md5
+> original config:
+
+```
+local	all          all                                     peer
+```
+
+> new config (trust):
+
+```
+local   all             all                                     trust
+```
+
+> new config (password):
+
+```
+local   all             all                                     md5
+```
+
+> original config:
+
+```
+host    all             all           127.0.0.1/32              Ident
+```
+
+> new config (trust):
+
+```
+host    all             all           127.0.0.1/0               trust
+```
+
+> new config (password):
+
+```
+host    all             all           127.0.0.1/0               md5
+```
+
+> use (password) mode!!!
 
 ```
 [root@ ~]# systemctl restart postgresql-9.6
@@ -230,6 +293,8 @@ C:\Program Files\PostgreSQL\9.6\data
 
 4. install redis
 
+[install redis on CentOS 7](http://www.jb51.net/article/93190.htm)
+
 ```
 [root@ ~]# wget http://download.redis.io/releases/redis-4.0.8.tar.gz
 [root@ ~]# tar xzf redis-4.0.8.tar.gz
@@ -237,12 +302,50 @@ C:\Program Files\PostgreSQL\9.6\data
 [root@ redis-4.0.8]# make
 ```
 
-5. start redis server
+5. start redis server (without **make install**)
 
 ```
 [root@ redis-4.0.8]# ./src/redis-server
 ```
 
+6. make install
+
+```
+[root@ redis-4.0.8]# cd /src
+[root@ src]# make install
+[root@ src]# cd /
+[root@ src]# redis-server
+```
+
+> after make install, redis-server can be invoked anywhere
+
+7. daemonize redis
+
+```
+[root@ ~]# vim ./redis-4.0.8/redis.conf
+```
+
+> daemonize yes
+
+8. 
+
+```
+[root@ etc]# vim /root/redis-4.0.8/utils/redis_init_script
+```
+
+```
+#!/bin/sh
+# chkconfig: 2345 90 10
+# descrption: Redis is a persistent key-value database
+```
+
+```
+[root@ ~]# cd /etc
+[root@ etc]# mkdir redis
+[root@ etc]# cp /root/redis-4.0.8/redis.conf /etc/redis/6379.conf
+[root@ etc]# cp /root/redis-4.0.8/utils/redis_init_script /etc/init.d/redisd
+[root@ etc]# chkconfig redisd on
+```
 
 ## 20180210
 
