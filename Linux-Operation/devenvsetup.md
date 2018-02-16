@@ -1,6 +1,15 @@
 # dev env setup
 
+## 20180216
+
+```
+[root@ projects]# npm install -g mocha
+[root@ projects]# npm install -g istanbul
+```
+
 ## 20180213
+
+1. create batch file
 
 ```
 [root@ ~]# cd projects
@@ -18,6 +27,11 @@
 git clone https://YunzhiWei@github.com/Clare-Huang/awardapply-backend.git
 ```
 
+2. invoke batch file and install packages
+
+```
+[root@ awardapply]# yarn install
+```
 
 ## 20180212
 
@@ -221,8 +235,6 @@ awardapply=# show client_encoding;
 ```
 C:\Program Files\PostgreSQL\9.6\data
 ```
-
-> to make sure the lc_messages, lc_monetary, lc_numeric and lc_time are 'en_US.UTF-8'
 
 [to understand pg encoding](https://www.cnblogs.com/winkey4986/p/6279243.html)
 
