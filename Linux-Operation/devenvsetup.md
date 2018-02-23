@@ -1,5 +1,25 @@
 # dev env setup
 
+## 20180223
+
+1. Edit the profile file
+
+```
+[root@ ~]# vim /etc/profile
+```
+
+2. content as below
+
+```
+export AWARDAPPLY_SECRET="XXXXXXXXXX"
+```
+
+3. activate the environment variable
+
+```
+[root@ ~]# source /etc/profile
+```
+
 ## 20180216
 
 ```
