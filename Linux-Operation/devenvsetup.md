@@ -1,5 +1,130 @@
 # dev env setup
 
+## 20180430
+
+1. create extension
+
+```
+[root@ ~]# psql -U awardapply -d awardapply
+awardapply=> \c awardapply postgres
+Password for user postgres: 
+You are now connected to database "awardapply" as user "postgres".
+awardapply=# create extension tablefunc;
+CREATE EXTENSION
+awardapply=# \c awardapply awardapply
+Password for user awardapply: 
+You are now connected to database "awardapply" as user "awardapply".
+```
+
+## 20180412
+
+1. Install Jenkins (in office desktop - CentOS 7)
+
+[](https://www.cnblogs.com/woshimrf/p/6103366.html)
+[](https://www.jianshu.com/p/b524b151d35f)
+
+```
+$ sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+$ sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+$ sudo yum -y install jenkins
+```
+
+2. Install Java
+
+```
+$ sudo yum install java-1.8.0-openjdk
+$ java -version
+openjdk version "1.8.0_161"
+OpenJDK Runtime Environment (build 1.8.0_161-b14)
+OpenJDK 64-Bit Server VM (build 25.161-b14, mixed mode)
+```
+
+if Java is installed before, may need to remove it before install
+
+```
+$ java -version
+java version "1.5.0"
+$ sudo yum remove java
+```
+
+3. start jenkins vervice
+
+```
+$ sudo service jenkins start/stop/restart
+$ sudo chkconfig jenkins on
+```
+
+4. Open Jenkins
+
+Browser: IP:8080
+
+5. Install plugin
+
+6. Create the first user
+
+> username: admin
+> password: Jenkins
+> email: yunzhi.wei@yg-net.com
+
+## 20180401
+
+1. Install ErLang
+
+[Introduction from RabbitMQ](http://www.rabbitmq.com/install-rpm.html)
+[Download from ErLang](https://www.erlang-solutions.com/resources/download.html)
+[Article](https://blog.csdn.net/qq_22075041/article/details/78855708)
+
+* Adding repository entry
+
+```
+wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
+rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
+```
+
+* Installing Erlang
+
+```
+sudo yum install erlang
+```
+
+
+2. Install RabbitMQ
+
+[Find a download address from this page](http://www.rabbitmq.com/install-rpm.html)
+[For example](https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.7.4/rabbitmq-server-3.7.4-1.el7.noarch.rpm)
+And use the following command to install.
+
+```
+wget https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.7.4/rabbitmq-server-3.7.4-1.el7.noarch.rpm
+rpm --import https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc
+# this example assumes the CentOS 7 version of the package
+yum install rabbitmq-server-3.7.4-1.el7.noarch.rpm
+```
+
+
+3. As an administrator, start and stop the server as usual:
+
+```
+/sbin/service rabbitmq-server start
+```
+
+```
+/sbin/service rabbitmq-server stop
+```
+
+4. To start the daemon by default when the system boots, as an administrator run
+
+```
+chkconfig rabbitmq-server on
+```
+
+5. Enable Web Admin
+
+```
+sudo rabbitmq-plugins enable rabbitmq_management
+```
+
+
 ## 20180223
 
 1. Edit the profile file
