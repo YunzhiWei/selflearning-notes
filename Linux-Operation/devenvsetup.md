@@ -66,6 +66,68 @@ Browser: IP:8080
 > password: Jenkins
 > email: yunzhi.wei@yg-net.com
 
+7. User root user with permission (not user 'jenkins' by default)
+
+
+> 修改jenkins执行用户
+```
+vi /etc/sysconfig/jenkins
+```
+
+> 修改JENKINS_USER值：
+```
+## Type:        string
+## Default:     "jenkins"
+## ServiceRestart: jenkins
+#
+# Unix user account that runs the Jenkins daemon
+# Be careful when you change this, as you need to update
+# permissions of $JENKINS_HOME and /var/log/jenkins.
+#
+JENKINS_USER="root"
+```
+
+> 这里我们把JENKINS_USER值改为root用户。
+> 注意：这里不一定就要修改为root用户，可以根据实际情况分配一个可执行相应命令的用户即可。
+
+> 修改目录的相应权限：
+
+```
+sudo chown -R root /var/log/jenkins 
+sudo chgrp -R root /var/log/jenkins
+
+sudo chown -R root /var/lib/jenkins  
+sudo chgrp -R root /var/lib/jenkins
+
+sudo chown -R root /var/cache/jenkins 
+sudo chgrp -R root /var/cache/jenkins
+```
+
+
+> Update
+
+```
+vim /etc/sudoers
+```
+
+```
+## Allow root to run any commands anywhere
+root      ALL=(ALL)      ALL
+jenkins   ALL=(ALL)      ALL
+```
+
+> restart
+
+```
+service jenkins restart
+```
+
+> add the following line at the beginning of the Execute Shell
+
+```
+#!/bin/bash -ilex
+```
+
 ## 20180401
 
 1. Install ErLang
@@ -266,8 +328,8 @@ postgres=# GRANT ALL ON DATABASE awardapply TO awardapply;
 * Option 2
 
 ```
-postgres=# DROP USER awardapply;
 postgres=# DROP DATABASE awardapply;
+postgres=# DROP USER awardapply;
 postgres=# CREATE USER awardapply WITH PASSWORD '123456';
 postgres=# CREATE DATABASE awardapply OWNER awardapply;
 postgres=# GRANT ALL PRIVILEGES ON DATABASE awardapply TO awardapply;
@@ -365,6 +427,7 @@ postgres=# \d
 [root@ ~]# psql -U awardapply -d awardapply
 awardapply=# create extension ltree;
 awardapply=# create extension "pgcrypto";
+awardapply=# create extension tablefunc;
 ```
 
 18. check encoding
