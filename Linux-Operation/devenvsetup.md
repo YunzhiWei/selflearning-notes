@@ -425,9 +425,12 @@ postgres=# \d
 
 ```
 [root@ ~]# psql -U awardapply -d awardapply
+awardapply=> \c awardapply postgres;
 awardapply=# create extension ltree;
 awardapply=# create extension "pgcrypto";
 awardapply=# create extension tablefunc;
+awardapply=# \c awardapply awardapply;
+awardapply=> 
 ```
 
 18. check encoding
