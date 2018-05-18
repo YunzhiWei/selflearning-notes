@@ -1,5 +1,104 @@
 # dev env setup
 
+## 20180518
+
+### login to remove Linux server as root without password
+
+1. [easy way](https://blog.csdn.net/oLiHongMing/article/details/79951603)
+2. [more complete way](https://blog.csdn.net/universe_hao/article/details/52296811)
+3. Here is my way
+
+> Login to local Linux server as root
+> generate private and public key
+
+```
+[root@SHYG ~]# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+95:50:b9:b0:63:a5:aa:61:3a:28:49:a6:2f:3e:6f:8e root@SHYG.CentOS
+The key's randomart image is:
++--[ RSA 2048]----+
+|        ....     |
+|        ..o.     |
+|         =o.     |
+|        =..      |
+|       oS.       |
+| o  o .          |
+|+o o o           |
+|*.+..            |
+|oE*+             |
++-----------------+
+[root@SHYG ~]# ^C
+[root@SHYG ~]# 
+```
+
+> check the generated key
+
+```
+[root@SHYG ~]# cd .ssh
+[root@SHYG .ssh]# ls
+id_rsa  id_rsa.pub  known_hosts
+```
+
+> copy public key to remove server
+
+```
+[root@SHYG .ssh]# ssh-copy-id 39.106.193.149
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@39.106.193.149's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh '39.106.193.149'"
+and check to make sure that only the key(s) you wanted were added.
+```
+
+> login to remove server as root and check
+
+```
+[root@1core2g201802 ~]# cd .ssh
+[root@1core2g201802 .ssh]# cat authorized_keys 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJZltn44S6Ry4gJwWkiPELDwoCYCH9cFaUUQAhYkWRdWXqO0Kc6UrC5O53n7IzLif0S6xKGSR4W8Sq82sIwRsagjTfolaSUjkajP8gn2XbCFoj0hJpQBGs5pAzJnwLq/DKkvwLfVEUAuaQhPiY9dhNqOKBasq22XRleYH7um2EBNd+brcUEa6PtCE+R0lAp70FouTnifKUBmUcZgK+6G+N2wy29r3yDdJxCnLBcO4mxy04pV8YFVrvzufU5BsvLxts7DdVQxFO3pgj+icoV9DvQHC9GbBqfuNJ7sPpmZy75vsjaTs2kEHGFcvl4aF/oZk3oeN5dprgIkCmn5JHvGcV root@SHYG.CentOS
+[root@1core2g201802 .ssh]# 
+```
+
+> try to login from local to remove without password
+
+```
+[root@SHYG .ssh]# ssh '39.106.193.149'
+Last login: Fri May 18 13:36:33 2018 from 101.81.137.116
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+[root@1core2g201802 ~]# 
+[root@1core2g201802 ~]# 
+[root@1core2g201802 ~]# 
+[root@1core2g201802 ~]# ls
+dump.rdb                           node-v8.9.4-linux-x64         projects                                redis-4.0.8
+erlang-solutions-1.0-1.noarch.rpm  node-v8.9.4-linux-x64.tar.xz  rabbitmq-server-3.7.4-1.el7.noarch.rpm  redis-4.0.8.tar.gz
+[root@1core2g201802 ~]# 
+```
+
+### Jenkins
+
+[Reference](https://blog.csdn.net/tragedyxd/article/details/51861526)
+
+> ***remember to 'Test Configuration' during configuring 'Publish over SSH'***
+
+## 20180517
+
+1. Copy folder from 192.168.1.30 (Linux CentOS) to Aliyun Linux
+
+```
+[root@SHYG reactadmin]# scp -r ./build root@39.106.193.149:/home
+```
+
 ## 20180430
 
 1. create extension
@@ -70,11 +169,13 @@ Browser: IP:8080
 
 
 > 修改jenkins执行用户
+
 ```
 vi /etc/sysconfig/jenkins
 ```
 
 > 修改JENKINS_USER值：
+
 ```
 ## Type:        string
 ## Default:     "jenkins"
@@ -102,7 +203,6 @@ sudo chgrp -R root /var/lib/jenkins
 sudo chown -R root /var/cache/jenkins 
 sudo chgrp -R root /var/cache/jenkins
 ```
-
 
 > Update
 

@@ -41,6 +41,10 @@
 
 [download here](https://code.visualstudio.com/)
 
+### add extensions: 
+
+1. Quokka.js
+
 ## 钉钉
 
 1. [download here](https://www.dingtalk.com/)

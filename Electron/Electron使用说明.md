@@ -5,7 +5,7 @@
 - 在项目目录下 
 
 ``` node
-npm/yarn install --save electron
+npm/yarn add electron --dev
 ```
 - 安装结束后 在package.json中加入
 
@@ -97,7 +97,7 @@ electron-builder（目前主要用的这个打包工具，因为可以配合自�
 - 安装
 
 ```js
-npm install --save-dev electron-builder
+yarn add electron-builder --dev
 //这里需要注意要用 --save-dev，如果直接用--save， 打包会报错
 
 ```
