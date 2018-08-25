@@ -1,5 +1,14 @@
 # dev env setup
 
+## 20180522
+
+> tried but fail
+
+```
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_topology;
+```
+
 ## 20180518
 
 ### login to remove Linux server as root without password
@@ -393,7 +402,7 @@ git clone https://YunzhiWei@github.com/Clare-Huang/awardapply-backend.git
 7. check postgresql status
 
 ```
-[root@ ~]# systemctl start postgresql-9.6
+[root@ ~]# systemctl status postgresql-9.6
 ```
 
 8. go into interactive mode with user account of 'postgres'
@@ -659,7 +668,7 @@ C:\Program Files\PostgreSQL\9.6\data
 ```
 #!/bin/sh
 # chkconfig: 2345 90 10
-# descrption: Redis is a persistent key-value database
+# description: Redis is a persistent key-value database
 ```
 
 ```
