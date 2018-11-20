@@ -82,6 +82,35 @@ Copy from [here](http://www.centoscn.com/image-text/install/2015/0510/5399.html)
 [root@localhost /]# ssserver -c /etc/shadowsocks.json -d stop
 ```
 
+### 6、制作服务启动脚本（假设脚本名称为：ssstart.sh）
+
+```
+#!/bin/sh
+ssserver -c /etc/shadowsocks.json -d start
+```
+
+### 7、设置开机自启动
+
+编辑文件：rc.local
+
+```
+[root@xxxxxx ~] vi /etc/rc.local
+```
+
+内容如下：
+
+```
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+source ~/.CentOS-WQxmr/pro/self.sh
+sh ~/ssstart.sh
+```
+
 ## 参考
 
 * https://github.com/shadowsocks/shadowsocks/wiki/Shadowsocks-使用说明

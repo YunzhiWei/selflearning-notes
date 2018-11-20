@@ -84,3 +84,9 @@ There are screens on:
 
 [root@1core2g201802 ~]# exit
 ```
+
+> 注意
+>
+> Crtl + a +d     保存进程并退出作业(程序在screen中继续运行，screen -ls 可查看)
+>
+> exit            退出作业和进程(程序终止，screen -ls 不可查看)
