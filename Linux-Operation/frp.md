@@ -113,7 +113,7 @@ node app
 
 # Subdomain
 
- If you want to use sub domain, here is the case:
+If you want to use sub domain, here is the case:
 
 ```
 # frps.ini
@@ -134,6 +134,31 @@ type = http
 local_port = 3000
 subdomain = [site name]
 ```
+
+Example
+
+```
+# frps.ini
+
+[common]
+bind_port = 7000
+vhost_http_port = 80
+subdomain_host = frp.yg-net.com
+```
+
+```
+# frpc.ini
+
+[common]
+server_addr = 107.151.172.73
+server_port = 7000
+
+[web]
+type = http
+local_port = 3000
+subdomain = atlantis
+```
+
 
 # 注意
 
