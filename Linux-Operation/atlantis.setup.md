@@ -699,19 +699,25 @@ server {
 * PM2: http://localhost:9615
 * RabbitMQ: http://localhost:15672
 
-## Prepare Batch File
+## Install rzsz (for file upload from Windows XShell to Linux)
+
+```
+[root@ ~]# yum install  lrzsz -y
+```
+
+## prepare runtime dependencies
 
 1. create and execute batch file
 
 ```
 [root@ ~]# mkdir projects
 [root@ ~]# cd projects
-[root@ projects]# touch cloneatlantis.sh
-[root@ projects]# vim cloneatlantis.sh
-[root@ projects]# sh cloneatlantis.sh
+[root@ projects]# touch clone.atlantis.sh
+[root@ projects]# vim clone.atlantis.sh
+[root@ projects]# sh clone.atlantis.sh
 ```
 
-> cloneatlantis.sh:
+> clone.atlantis.sh:
 
 ```
 #!/bin/bash
@@ -719,6 +725,51 @@ server {
 
 git clone https://YunzhiWei@github.com/Clare-Huang/Atlantis.git
 ```
+
+2. upload certifications for wepay and md file for wechat
+
+start XShell
+
+```
+[root@ projects]# mkdir runtime
+[root@ projects]# cd runtime
+[root@ runtime]# mkdir wechat
+[root@ runtime]# mkdir wepay
+[root@ runtime]# cd wechat
+[root@ wechat]# rz
+[root@ runtime]# cd ../wepay
+[root@ wechat]# rz
+```
+
+## Setup Runtime Environment Variables
+
+1. Edit the profile file
+
+```
+[root@ ~]# vim /etc/profile
+```
+
+2. content as below
+
+```
+export NODE_ENV="production"
+```
+
+3. activate the environment variable
+
+```
+[root@ ~]# source /etc/profile
+```
+
+or 
+
+```
+[root@ ~]# reboot
+```
+
+## clone projects
+
+
 
 2. initial database
 
@@ -757,30 +808,8 @@ or
 [root@ Atlantis]# 
 ```
 
-
-## Setup Development/Debugging/Testing Environment Variables
-
-```
-MOCHA_POSTMAN_TESTING = testing
-```
-
-## Setup Runtime Environment Variables
-
-1. Edit the profile file
+## remove project folder
 
 ```
-[root@ ~]# vim /etc/profile
-```
-
-2. content as below
-
-```
-export XXXXXXXXXXXXXX_SECRET="XXXXXXXXXX"
-export NODE_ENV="production"
-```
-
-3. activate the environment variable
-
-```
-[root@ ~]# source /etc/profile
+[root@ projects]# rm -rf Atlantis
 ```
