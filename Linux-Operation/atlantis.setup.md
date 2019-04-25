@@ -769,43 +769,26 @@ or
 
 ## clone projects
 
+1. 
 
+```
+[root@ ~]# cd projects
+[root@ projects]# sh clone.atlantis.sh
+```
 
 2. initial database
 
 ```
+[root@ projects]# cd Atlantis
 [root@ Atlantis]# yarn db:create
 [root@ Atlantis]# yarn db:ext
 [root@ Atlantis]# yarn db:init
 ```
 
-3. install packages
+3. start production
 
 ```
-[root@ Atlantis]# yarn install
-```
-
-4. build & deploy
-
-```
-[root@ Atlantis]# yarn build
-[root@ Atlantis]# yarn deploy
-```
-
-5. start server
-
-```
-[root@ Atlantis]# yarn start:prod
-```
-
-or
-
-```
-[root@ Atlantis]# pm2 start app.js --name 'Atlantis'
-[root@ Atlantis]# pm2 web
-[root@ Atlantis]# pm2 startup
-[root@ Atlantis]# pm2 save
-[root@ Atlantis]# 
+[root@ Atlantis]# yarn production
 ```
 
 ## remove project folder
