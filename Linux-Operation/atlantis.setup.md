@@ -796,3 +796,26 @@ or
 ```
 [root@ projects]# rm -rf Atlantis
 ```
+
+# IT Operations
+
+## rabbitmq
+
+* List all queues and messages
+
+```
+[root@ Atlantis]# rabbitmqctl list_queues
+```
+
+* reset and clear queues
+
+```
+[root@ Atlantis]# rabbitmqctl stop_app
+[root@ Atlantis]# rabbitmqctl reset
+[root@ Atlantis]# rabbitmqctl start_app
+```
+
+## Web Admin
+
+* PM2: http://localhost:9615
+* RabbitMQ: http://localhost:15672
