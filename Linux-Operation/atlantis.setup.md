@@ -589,9 +589,9 @@ sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
 * add new user for Web Admin
 
 ```
-sudo rabbitmqctl add_user mqadmin mqadminpassword
-sudo rabbitmqctl set_user_tags mqadmin administrator
-sudo rabbitmqctl set_permissions -p / mqadmin ".*" ".*" ".*"
+sudo rabbitmqctl add_user atlantis 12345678
+sudo rabbitmqctl set_user_tags atlantis administrator
+sudo rabbitmqctl set_permissions -p / atlantis ".*" ".*" ".*"
 ```
 
 * 阿里云实例安全组设置：内网入方向规则（15672）
@@ -813,6 +813,12 @@ or
 [root@ Atlantis]# rabbitmqctl stop_app
 [root@ Atlantis]# rabbitmqctl reset
 [root@ Atlantis]# rabbitmqctl start_app
+```
+
+```
+sudo rabbitmqctl add_user atlantis 12345678
+sudo rabbitmqctl set_user_tags atlantis administrator
+sudo rabbitmqctl set_permissions -p / atlantis ".*" ".*" ".*"
 ```
 
 ## Web Admin
