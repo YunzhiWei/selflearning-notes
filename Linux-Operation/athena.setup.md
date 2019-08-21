@@ -296,19 +296,19 @@ postgres=# alter user postgres with password '123456';
 * Option 1
 
 ```
-postgres=# CREATE DATABASE universal;
-postgres=# CREATE USER universal LOGIN PASSWORD '123456';
-postgres=# GRANT ALL ON DATABASE universal TO universal;
+postgres=# CREATE DATABASE athena;
+postgres=# CREATE USER athena LOGIN PASSWORD '123456';
+postgres=# GRANT ALL ON DATABASE athena TO athena;
 ```
 
 * Option 2
 
 ```
-postgres=# DROP DATABASE universal;
-postgres=# DROP USER universal;
-postgres=# CREATE USER universal WITH PASSWORD '123456';
-postgres=# CREATE DATABASE universal OWNER universal;
-postgres=# GRANT ALL PRIVILEGES ON DATABASE universal TO universal;
+postgres=# DROP DATABASE athena;
+postgres=# DROP USER athena;
+postgres=# CREATE USER athena WITH PASSWORD '123456';
+postgres=# CREATE DATABASE athena OWNER athena;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE athena TO athena;
 ```
 
 12. quit and change back to root
@@ -381,7 +381,7 @@ host    all             all           127.0.0.1/0               md5
 15. ( !!! may skip this step !!! ) login again (without the last step, this step will fail)
 
 ```
-[postgres@ root]$ psql -U universal -d universal
+[postgres@ root]$ psql -U athena -d athena
 ```
 
 16. ( !!! may skip this step !!! ) other pg command
@@ -403,13 +403,13 @@ postgres=# \d
 18. ( !!! may skip this step !!! ) create extension
 
 ```
-[root@ ~]# psql -U universal -d universal
-universal=> \c universal postgres;
-universal=# create extension ltree;
-universal=# create extension "pgcrypto";
-universal=# create extension tablefunc;
-universal=# \c universal universal;
-universal=> 
+[root@ ~]# psql -U athena -d athena
+athena=> \c athena postgres;
+athena=# create extension ltree;
+athena=# create extension "pgcrypto";
+athena=# create extension tablefunc;
+athena=# \c athena athena;
+athena=> 
 ```
 
 19. ( !!! may skip this step !!! ) check encoding
@@ -589,9 +589,9 @@ sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
 * add new user for Web Admin
 
 ```
-sudo rabbitmqctl add_user atlantis 12345678
-sudo rabbitmqctl set_user_tags atlantis administrator
-sudo rabbitmqctl set_permissions -p / atlantis ".*" ".*" ".*"
+sudo rabbitmqctl add_user athena 12345678
+sudo rabbitmqctl set_user_tags athena administrator
+sudo rabbitmqctl set_permissions -p / athena ".*" ".*" ".*"
 ```
 
 * 阿里云实例安全组设置：内网入方向规则（15672）
@@ -667,13 +667,13 @@ http {
 4. new a site config
 
 ```
-[root@ ~]# cp /etc/nginx/conf.d/default.conf /etc/nginx/sites-available/atlantis.yg-net.com.conf
-[root@ ~]# vim /etc/nginx/sites-available/atlantis.yg-net.com.conf
-[root@ ~]# cat /etc/nginx/sites-available/atlantis.yg-net.com.conf
+[root@ ~]# cp /etc/nginx/conf.d/default.conf /etc/nginx/sites-available/athena.yg-net.com.conf
+[root@ ~]# vim /etc/nginx/sites-available/athena.yg-net.com.conf
+[root@ ~]# cat /etc/nginx/sites-available/athena.yg-net.com.conf
 
 server {
     listen      80;
-    server_name atlantis.yg-net.com;
+    server_name athena.yg-net.com;
     location / {
         proxy_pass http://localhost:8001;
         proxy_http_version 1.1;
@@ -688,7 +688,7 @@ server {
     }
 }
 
-[root@ ~]# ln -s /etc/nginx/sites-available/atlantis.yg-net.com.conf /etc/nginx/sites-enabled/atlantis.yg-net.com.conf
+[root@ ~]# ln -s /etc/nginx/sites-available/athena.yg-net.com.conf /etc/nginx/sites-enabled/athena.yg-net.com.conf
 [root@ ~]# nginx -t
 [root@ ~]# systemctl restart nginx
 
@@ -718,18 +718,18 @@ server {
 ```
 [root@ ~]# mkdir projects
 [root@ ~]# cd projects
-[root@ projects]# touch clone.atlantis.sh
-[root@ projects]# vim clone.atlantis.sh
-[root@ projects]# sh clone.atlantis.sh
+[root@ projects]# touch clone.athena.sh
+[root@ projects]# vim clone.athena.sh
+[root@ projects]# sh clone.athena.sh
 ```
 
-> clone.atlantis.sh:
+> clone.athena.sh:
 
 ```
 #!/bin/bash
 #publish service and api
 
-git clone https://YunzhiWei@github.com/Clare-Huang/Atlantis.git
+git clone https://YunzhiWei@github.com/Clare-Huang/Athena.git
 ```
 
 2. upload certifications for wepay and md file for wechat
@@ -779,28 +779,28 @@ or
 
 ```
 [root@ ~]# cd projects
-[root@ projects]# sh clone.atlantis.sh
+[root@ projects]# sh clone.athena.sh
 ```
 
 2. initial database
 
 ```
-[root@ projects]# cd Atlantis
-[root@ Atlantis]# yarn db:create
-[root@ Atlantis]# yarn db:ext
-[root@ Atlantis]# yarn db:init
+[root@ projects]# cd Athena
+[root@ Athena]# yarn db:create
+[root@ Athena]# yarn db:ext
+[root@ Athena]# yarn db:init
 ```
 
 3. start production
 
 ```
-[root@ Atlantis]# yarn production
+[root@ Athena]# yarn production
 ```
 
 ## remove project folder
 
 ```
-[root@ projects]# rm -rf Atlantis
+[root@ projects]# rm -rf Athena
 ```
 
 # IT Operations
@@ -810,21 +810,21 @@ or
 * List all queues and messages
 
 ```
-[root@ Atlantis]# rabbitmqctl list_queues
+[root@ Athena]# rabbitmqctl list_queues
 ```
 
 * reset and clear queues
 
 ```
-[root@ Atlantis]# rabbitmqctl stop_app
-[root@ Atlantis]# rabbitmqctl reset
-[root@ Atlantis]# rabbitmqctl start_app
+[root@ Athena]# rabbitmqctl stop_app
+[root@ Athena]# rabbitmqctl reset
+[root@ Athena]# rabbitmqctl start_app
 ```
 
 ```
-sudo rabbitmqctl add_user atlantis 12345678
-sudo rabbitmqctl set_user_tags atlantis administrator
-sudo rabbitmqctl set_permissions -p / atlantis ".*" ".*" ".*"
+sudo rabbitmqctl add_user athena 12345678
+sudo rabbitmqctl set_user_tags athena administrator
+sudo rabbitmqctl set_permissions -p / athena ".*" ".*" ".*"
 ```
 
 ## Web Admin
