@@ -123,7 +123,7 @@ $ docker run docker/whalesay cowsay boo
 ## 使用 Node:alpine 启动 js 脚本
 
 ```
-# docker run -it --rm --name node_main_1 -v "$PWD":/usr/src/app -w /usr/src/app node:11.10.1-alpine node main.js
+# docker run -it --rm --name node_main_1 -v "$PWD":/usr/src/app -w /usr/src/app node:11.10.1-alpine node index.js
 ```
 
 ## 使用 postgres:alpine 管理数据库
@@ -158,3 +158,61 @@ psql -U postgres -d postgres
 - [Docker for the Absolute Beginner - Hands On](https://kodekloud.com/courses/296044)
 - [Docker Documents](https://docs.docker.com/)
 - [docker实现postgresql](https://www.jianshu.com/p/9ab7b89637e7)
+
+
+# 集成环境
+
+## 安装 Nodejs
+
+1. download and install npm binary pakage
+
+```
+[root@ ~]# wget https://nodejs.org/dist/v12.14.0/node-v12.14.0-linux-x64.tar.xz
+
+[root@ ~]# tar -xvf node-v12.14.0-linux-x64.tar.xz
+
+[root@ ~]# ln -s ~/node-v12.14.0-linux-x64/bin/node /usr/bin/node
+
+[root@ ~]# ln -s ~/node-v12.14.0-linux-x64/bin/npm /usr/bin/npm
+
+[root@ ~]# npm -v
+[root@ ~]# node -v
+```
+
+> install wget in case it is not installed
+
+```
+[root@ ~]# yum -y install wget
+```
+
+2. edit profile
+
+```
+[root@ ~]# vim /etc/profile
+[root@ ~]# cat /etc/profile
+```
+
+> profile file content
+
+```
+export NODE_PATH="/root/node-v12.14.0-linux-x64"
+export PATH=$NODE_PATH/bin:$PATH
+```
+
+3. restart the server from console
+
+```
+[root@ ~]# reboot
+```
+
+4. install global npm packages
+
+```
+[root@ ~]# npm install -g yarn
+```
+
+```
+[root@ ~]# npm install -g gulp
+[root@ ~]# npm install -g cross-env
+[root@ ~]# npm install -g rimraf
+```
