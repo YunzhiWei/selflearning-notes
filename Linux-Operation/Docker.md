@@ -4,7 +4,7 @@
 - Community Edition
 - Enterprise Edition
 
-# 安装
+# 安装 Docker
 
 ## 参考
 
@@ -137,7 +137,7 @@ $ docker run docker/whalesay cowsay boo
 2. 启动容器
 
 ```
-# docker run --name dbpg -e POSTGRES_PASSWORD=123456 -p 54320:5432 -d postgres:alpine
+# docker run --name dbpg -e POSTGRES_PASSWORD=123456 -p 5432:5432 -d postgres:alpine
 ```
 
 3. 进入容器
@@ -161,6 +161,43 @@ psql -U postgres -d postgres
 
 
 # 集成环境
+
+## 使用中国区官方镜像
+
+1. create json file
+
+```
+# vi /etc/docker/daemon.json
+# cat /etc/docker/daemon.json
+```
+
+> daemon.json
+
+```
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+```
+
+2. restart docker
+
+```
+# systemctl daemon-reload
+# systemctl restart docker
+# systemctl restart docker.service
+```
+
+3. reboot server
+
+```
+# reboot
+```
+
+## 下载 Node 镜像
+
+```
+# docker pull node:12.14.0-alpine
+```
 
 ## 安装 Nodejs
 
