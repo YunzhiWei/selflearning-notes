@@ -45,6 +45,32 @@ $ sudo docker run hello-world
 $ docker run docker/whalesay cowsay boo
 ```
 
+# 安装 Docker Compose
+
+## 参考
+
+- [docker 及 docker-compose 的快速安装和简单使用](https://www.cnblogs.com/morang/p/9501223.html)
+
+## 安装日志
+
+1. Download Docker Compose (with Daocloud Mirror)
+
+```
+# curl -L https://get.daocloud.io/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+```
+
+2. Apply executable permissions to the binary:
+
+```
+# chmod +x /usr/local/bin/docker-compose
+```
+
+3. Verify that Docker Compose
+
+```
+# docker-compose --version
+```
+
 # 基本命令
 
 ## run - Run a container
@@ -158,6 +184,13 @@ psql -U postgres -d postgres
 - [Docker for the Absolute Beginner - Hands On](https://kodekloud.com/courses/296044)
 - [Docker Documents](https://docs.docker.com/)
 - [docker实现postgresql](https://www.jianshu.com/p/9ab7b89637e7)
+- [Docker网络和容器的通信](https://www.cnblogs.com/whych/p/9595671.html)
+- [docker中容器之间通信方式](https://blog.csdn.net/u013355826/article/details/84987233)
+- [使用docker-compose 大杀器来部署服务](https://www.cnblogs.com/neptunemoon/p/6512121.html#toc_30)
+
+# 计划
+
+## D1
 
 
 # 集成环境
