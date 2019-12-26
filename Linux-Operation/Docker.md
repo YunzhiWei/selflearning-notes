@@ -45,6 +45,38 @@ $ sudo docker run hello-world
 $ docker run docker/whalesay cowsay boo
 ```
 
+## 使用中国区官方镜像
+
+1. create json file
+
+```
+# vi /etc/docker/daemon.json
+# cat /etc/docker/daemon.json
+```
+
+> daemon.json
+
+```
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+```
+
+2. restart docker
+
+```
+# systemctl daemon-reload
+# systemctl restart docker
+# systemctl restart docker.service
+```
+
+3. reboot server
+
+```
+# reboot
+```
+
+
 # 安装 Docker Compose
 
 ## 参考
@@ -178,7 +210,6 @@ $ docker run docker/whalesay cowsay boo
 psql -U postgres -d postgres
 ```
 
-
 # 参考
 
 - [Docker for the Absolute Beginner - Hands On](https://kodekloud.com/courses/296044)
@@ -194,37 +225,6 @@ psql -U postgres -d postgres
 
 
 # 集成环境
-
-## 使用中国区官方镜像
-
-1. create json file
-
-```
-# vi /etc/docker/daemon.json
-# cat /etc/docker/daemon.json
-```
-
-> daemon.json
-
-```
-{
-  "registry-mirrors": ["https://registry.docker-cn.com"]
-}
-```
-
-2. restart docker
-
-```
-# systemctl daemon-reload
-# systemctl restart docker
-# systemctl restart docker.service
-```
-
-3. reboot server
-
-```
-# reboot
-```
 
 ## 下载 Node 镜像
 
@@ -286,3 +286,10 @@ export PATH=$NODE_PATH/bin:$PATH
 [root@ ~]# npm install -g cross-env
 [root@ ~]# npm install -g rimraf
 ```
+
+
+
+
+名称：有备上线
+备案号：996ed53d-050e-44de-8cf7-ec39d9b8e457
+本网站汇集了互联网上线的相关技术准备工作，包括前端开发、后端开发、服务器配置、网站架构、系统监控运维，等相关的技术专题。重点针对：前端的 React 技术，后端的 Nodej 技术，运维相关的容器技术。
