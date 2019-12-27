@@ -49,32 +49,32 @@ $ docker run docker/whalesay cowsay boo
 
 1. create json file
 
-```
-# vi /etc/docker/daemon.json
-# cat /etc/docker/daemon.json
-```
+    ```
+    # vi /etc/docker/daemon.json
+    # cat /etc/docker/daemon.json
+    ```
 
-> daemon.json
+    > daemon.json
 
-```
-{
-  "registry-mirrors": ["https://registry.docker-cn.com"]
-}
-```
+    ```
+    {
+      "registry-mirrors": ["https://registry.docker-cn.com"]
+    }
+    ```
 
-2. restart docker
+1. restart docker
 
-```
-# systemctl daemon-reload
-# systemctl restart docker
-# systemctl restart docker.service
-```
+    ```
+    # systemctl daemon-reload
+    # systemctl restart docker
+    # systemctl restart docker.service
+    ```
 
-3. reboot server
+1. reboot server
 
-```
-# reboot
-```
+    ```
+    # reboot
+    ```
 
 
 # 安装 Docker Compose
