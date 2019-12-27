@@ -2,6 +2,7 @@
 
 - [从零搭建Prometheus监控报警系统](https://www.cnblogs.com/chenqionghe/p/10494868.html)
 - [Prometheus](https://www.jianshu.com/p/93c840025f01)
+- [Prometheus Docs](https://prometheus.io/docs/introduction/overview/)
 
 # 安装日志
 
@@ -23,18 +24,21 @@
 
     ```
     global:
-    scrape_interval: 15s
-    evaluation_interval: 15s
-
+      scrape_interval: 15s
+      evaluation_interval: 15s
+        
     rule_files:
-    # - "first.rules"
-    # - "second.rules"
+      # - "first.rules"
+      # - "second.rules"
 
     scrape_configs:
-    - job_name: 'spring'
-        metrics_path: '/actuator/prometheus'
+      - job_name: 'prometheus'
+        # metrics_path defaults to '/metrics'
+        # schema defaults to 'http'
         static_configs:
-        - targets: ['localhost:9090']
+          - targets: ['localhost:9090']
+            labels:
+              my: mylabel  
     ```
 
 1. 下载 `prometheus` 镜像
@@ -48,3 +52,9 @@
     ```
     # docker run --name prom --hostname prom --ip-forward=true -p 9090:9090 -v /home/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml -d prom/prometheus:v2.15.1 
     ```
+
+1. 使用浏览器远程访问 `prometheus` 服务
+    > http://[hosting server IP]:9090
+
+1. 使用浏览器远程访问 `prometheus` 服务的 `job`
+    > http://[hosting server IP]:9090/metrics
