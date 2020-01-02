@@ -286,10 +286,3 @@ export PATH=$NODE_PATH/bin:$PATH
 [root@ ~]# npm install -g cross-env
 [root@ ~]# npm install -g rimraf
 ```
-
-
-
-
-名称：有备上线
-备案号：996ed53d-050e-44de-8cf7-ec39d9b8e457
-本网站汇集了互联网上线的相关技术准备工作，包括前端开发、后端开发、服务器配置、网站架构、系统监控运维，等相关的技术专题。重点针对：前端的 React 技术，后端的 Nodej 技术，运维相关的容器技术。

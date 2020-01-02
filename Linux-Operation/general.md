@@ -4,7 +4,7 @@
 
 ### 背景
 
-    > 在 CentOS 7 上安装 Docker 之后，启动 Nginx 镜像，发现 CentOS 7 的 80 端口被占用
+> 在 CentOS 7 上安装 Docker 之后，启动 Nginx 镜像，发现 CentOS 7 的 80 端口被占用
 
 ### 解决
 
@@ -41,5 +41,39 @@
 
 1. 再次使用 `lsof -i tcp:80` 命令检查服务器 `80` 端口占用情况
     > 确认 `Nginx` 服务没有自动启动
+
+## 修改主机名称
+
+### 背景
+
+> 在 CentOS 7 上安装 Kubernetes 之后，使用命令列出当前群集中的所有 Nodes，发现主机的名称，比较难于辨认
+
+### 解决
+
+1. 检查当前的服务器主机名称
+
+    ```
+    # hostname
+    # hostnamectl
+    # cat /etc/hostname
+    ```
+
+1. 编辑静态文件 `/etc/hostname` 修改主机名称
+
+    ```
+    # vi /etc/hostname
+    ```
+
+1. 重启服务器 或 重启服务
+
+    - 重启服务器
+        ```
+        # reboot
+        ```
+
+    - 重启服务
+        ```
+        # systemctl restart systemd-hostnamed
+        ```
 
 # 命令
