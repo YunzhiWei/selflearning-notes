@@ -126,14 +126,26 @@
     > !!! __ONLY__ adapt to __*RHEL/CentOS 7*__ !!!
 
     ```
-    cat <<EOF > /etc/sysctl.d/k8s.conf
+    # cat <<EOF > /etc/sysctl.d/k8s.conf
     net.bridge.bridge-nf-call-ip6tables = 1
     net.bridge.bridge-nf-call-iptables = 1
     EOF
     ```
 
     ```
-    sysctl --system　　# 是配置生效
+    # sysctl net.bridge.bridge-nf-call-iptables=1
+    # sysctl net.ipv4.ip_forward=1
+    ```
+
+    ```
+    # sysctl --system　　# 使配置生效
+    ```
+
+- Restart the systemd daemon and the kubelet service
+
+    ```
+    # systemctl daemon-reload
+    # systemctl restart kebelet
     ```
 
 ## Setup
@@ -330,7 +342,7 @@ kubectl [command] [TYPE] [NAME] [flags]
 
     ```
     # nginx-pod.yaml
-    apiVersioin: v1
+    apiVersion: v1
     kind: Pod
     metadata:
       name: nginx-pod
@@ -394,8 +406,13 @@ kubectl [command] [TYPE] [NAME] [flags]
 ## Concept
 
 - What is Replication Controller
+    
     > Ensure that a specified number of pods are running at any time
-    > HA
+
+- What the senario is RC for
+    
+    + High Availability
+    + Load Balancing
 
 - labels
     > Replication Controller and Pods are associated with 'lables'
@@ -468,18 +485,583 @@ kubectl [command] [TYPE] [NAME] [flags]
     # kubectl get po -o wide
     ```
 
-
 # ReplicaSet
+
+## Concept
+
+- What is ReplicaSet
+    > Ensure that a specified number of pods are running at any time
+
+- What the senario is ReplicaSet for
+    > Next generation of RC
+    
+    + High Availability
+    + Load Balancing
+
+- labels
+    > ReplicaSet and Pods are associated with 'lables'
+
+- selector
+    + Equality-based
+
+        * Syntax
+            > `=`, `==`, `!=`
+        
+        * Example
+            > `env = production`, `tier != frontend`
+
+        * command line
+            > `# kubectl get pods -l env=production`
+
+        * Used in
+            > Services & Replication Controller
+    
+    + Set-based
+
+        * Syntax
+            > `in`, `notin`, `exists`
+        
+        * Example
+            > `env in (production, qa)`, `tier notin (frontend, backend)`
+
+        * command line
+            > `# kubectl get pods -l 'env in (production)'`
+
+        * Used in
+            > ReplicaSet, Deployment, DaemonSet, Job
+
+## Demo
+
+- Manifest file example
+
+    ```
+    # nginx-rs.yaml
+    apiVersion: apps/v1
+    kind: ReplicaSet
+    metadata:
+      name: nginx.rs
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+            app: nginx-app
+        matchExpressions:
+            - {key: tier, operator: In, values: [frontend]}
+      template:
+        metadata:
+          name: nginx-pod
+          labels:
+            app: nginx-app
+            tier: frontend
+        spec:
+          containers:
+          - name: nginx-container
+            image: nginx
+            ports:
+            - containerPort: 80
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f nginx-rs.yaml
+    replicaset/nginx-rs created
+    ```
+
+- Check with kubectl command
+
+    ```
+    # kubectl get pods
+    # kubectl get po -o wide
+    # kubectl get po -l tier=frontend
+    # kubectl get rs nginx.rs -o wide
+    # kubectl describe rs nginx.rs
+    # kubectl get nodes
+    ```
+
+- Scaling up with kubectl command
+
+    ```
+    # kubectl scale rs nginx.rs --replicas=5
+    # kubectl get rs nginx.rs
+    # kubectl get po -o wide
+    ```
+
+- Scaling down with kubectl command
+
+    ```
+    # kubectl scale rs nginx.rs --replicas=3
+    # kubectl get rs nginx.rs
+    # kubectl get po -o wide
+    ```
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete -f nginx-rs.yaml
+    # kubectl get rs nginx.rs
+    # kubectl get po -o wide
+    ```
 
 # Deployments
 
+## Concept
+
+> Pods can be managed manually
+
+> Pods can be managed by __*Replication Controller*__ or __*ReplicaSet*__
+
+> Pods can be managed by __*Deployments*__
+
+- What is __*Deployments*__
+    > Ensure zero downtime when upgrade and rollback
+
+- What the senario is __*Deployments*__ for
+    + Upgrade & Rollback
+    + Sequentially in order
+    + Zero downtime
+    + Pause & Resume
+
+- Types
+    + Recreate
+    + RollingUpdate
+    + Canary
+    + Blue / Green
+
+## Demo 1
+
+- Manifest file example
+
+    ```
+    # nginx-deploy.yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx-deployment
+      labels:
+        app: nginx-app
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+            app: nginx-app
+        matchExpressions:
+            - {key: tier, operator: in, values: [frontend]}
+      template:
+        metadata:
+          name: nginx-pod
+          labels:
+            app: nginx-app
+            tier: frontend
+        spec:
+          containers:
+          - name: nginx-container
+            image: nginx
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 80
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f nginx-deploy.yaml
+    deployment.apps/nginx-deployment created
+    ```
+
+- Check with kubectl command
+
+    > One __*ReplicaSet*__ will be created automatically backend
+
+    ```
+    # kubectl get rs -l app=nginx-app
+    ```
+
+    ```
+    # kubectl get deploy -l app=nginx-app
+    # kubectl describe deploy nginx-deployment
+    ```
+
+    ```
+    # kubectl get po -l app=nginx-app
+    # kubectl get nodes
+    ```
+
+- Upgrade with kubectl command
+
+    + `set` command
+        ```
+        # kubectl set image deploy nginx-deployment nginx-container=nginx:1.9.1
+        deployment.extensions/nginx-deployment image updated
+        ```
+
+    + `edit` command
+        ```
+        # kubectl edit deploy nginx-deployment
+        deployment.extensions/nginx-deployment image updated
+        ```
+
+- Rollback with kubectl command
+    + `set` command with wrong version number
+        ```
+        # kubectl set image deploy nginx-deployment nginx-container=nginx:2020 --record
+        ```
+
+    + check status & history
+        ```
+        # kubectl rollout status deployment/nginx-deployment
+        # kubectl rollout history deployment/nginx-deployment
+        ```
+
+    + rollback
+        ```
+        # kubectl rollout undo deployment/nginx-deployment
+        ```
+    
+    + double check
+        ```
+        # kubectl rollout status deployment/nginx-deployment
+        ```
+
+- Scaling up with kubectl command
+
+    ```
+    # kubectl scale deployment nginx-deployment --replicas=5
+    # kubectl get deploy
+    # kubectl get po -o wide
+    ```
+
+- Scaling down with kubectl command
+
+    ```
+    # kubectl scale deployment nginx-deployment --replicas=1
+    # kubectl get deploy
+    # kubectl get po -l app=nginx-app
+    ```
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete -f nginx-deploy.yaml
+    # kubectl get rs nginx-rs
+    # kubectl get po -o wide
+    ```
+
+## Demo 2
+
+- 准备一个自己的 Docker Image
+    > Dockerfile
+    ```
+    FROM nginx:1.17.6-alpine
+
+    ADD ./www /www
+    ```
+
+- 创建 `www` 目录，并在该目录下创建 `index.html`
+    > index.html
+    ```
+    version # 1.0.0
+    hello world
+    ```
+
+- 构建自己的镜像
+    > 镜像需要存在于 worker node，而不是 master node
+    ```
+    # docker build ./ -t chris/demo
+    ```
+
+- 使用自己的镜像 `chris/demo`，重复 __*Demo 1*__
+
+- 创建 `demo-deploy.yaml`
+
+    ```
+    # cp nginx-deploy.yaml demo-deploy.yaml
+    ```
+
+- 更新 `demo-deploy.yaml`
+    > 为了让 kuburnetes 能够使用本地的镜像（`chris/demo`），而不是从网上拉取镜像
+
+    ```
+    imagePullPolicy: IfNotPresent
+    ```
+
+- deploy 创建之后，进入 Pod，检查 `www/index.html`
+    ```
+    # kubectl exec -it demo-deployment-xxxxxxxx -- /bin/sh
+    ```
+
+- 更新 `www/index.html` 的内容，重新构建 `chris/demo`
+    > 通过 `docker images` 可以看到，镜像的 `IMAGE ID` 发生了变化
+
+- 通过 `edit` 方式，编辑 `demo-deploy.yaml`，然后 `demo-deployment` 自动完成升级
+
+- 检查 Pods
+    > 原有的 Pods 被终止了，新的 Pods 被创建了；新 Pods 用到了最新的镜像内容
+
+- Rollback
+    > 如果之前的升级，没有带版本号的话，rollback 无法发挥作用
+    
+    > 所以，如果希望回滚有效，镜像必须要有明确的版本号
+
 # Services
+
+## Concept
+
+- What is __*Services*__
+    > Permanent access point of the Pod(s)
+
+- What the senario is __*Services*__ for
+    + After Pods are deleted and created dynamicly, they will have new IP address, how to access these Pods within the cluster
+    + How to expose Pods service outside of the cluster
+
+- Types
+    + ClusterIP (within the cluster)
+    + NodePort (expose to outside world)
+    + LoadBalancer
 
 # NodePort Service
 
-# Load Balancing
+## Concept
 
-# Cluster IP
+- What is __*NodePort Services*__
+    > Permanent access point of the __*Pod(s)*__ from outside world in `<IP>:<Port>` format
+
+- __*NodeIP*__ & __*NodePort*__
+    >- Outside world will access `<NodeIP>:<NodePort>`
+    >- __*NodePort*__ range: `30000` ~ `32767`
+
+- __*NodePort Service*__
+    >- When outside world request on `<NodeIP>:<NodePort>`, __*NodePort Service*__ will response.
+    >- __*NodePort Service*__ will foreward the request to the __*Pod*__ which is associated to it
+    >- __*Port*__ on __*NodePort Service*__ is `80`
+    >- __*TargetPort*__ on __*Pod*__ is `80`
+
+- Types
+    + NodePort (from outside world point of view)
+    + Port (Port on the NodePort Service)
+    + TargetPort (Port on the Pod)
+
+- 注意事项
+
+    >- 对一个 K8S 群集（cluster）来说，某一个端口（NodePort），只能有一个 NodePort Service
+    >- NodePort Service 根据 labels 来关联到一个或多个 Pods
+    >- 如果是多个 Podes，无论 Pods 是在同一个 Node 上，还是分布在不同的 Node 上，外界都可以通过`<NodeIP>:<NodePort>`来访问到对应的 Pods
+    
+## Demo
+
+- Manifest file example
+
+    ```
+    # nginx-svc-np.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: proxy-service
+      labels:
+        app: nginx-app
+    spec:
+      selector:
+        app: nginx-app
+      type: NodePort
+      ports:
+        - nodePort: 31000
+          port: 80
+          targetPort: 80
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f nginx-deploy.yaml
+    # kubectl create -f nginx-src-np.yaml
+    ```
+
+- Check with kubectl command
+
+    ```
+    # kubectl get service -l app=nginx-app
+    ```
+
+- Check with browser
+    > 通过 __*NodePort*__，无论是 Master Node IP，还是 Worker Node 的IP，都可以访问到 EndPoint
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete svc proxy-service
+    # kubectl get pods
+    ```
+
+# LoadBalancer
+
+## Concept
+
+- What is __*LoadBalancer Services*__
+    > Permanent access point of the __*Pod(s)*__ from outside world in `URL` format
+
+- sernario
+    >- 如果有多个 Pods 运行在不同的 Nodes 上面，__*NodePort service*__ 会使得通过任何一个 Node 的 `<NodeIP>:<NodePort>`，都可以访问到 __*NodePort Service*__
+    >- 如何能通过一个统一的 Access Point 发布这个 Service
+
+## Demo
+
+> LoadBalancer 能否成功创建，取决于云服务提供商
+
+- Manifest file example
+
+    ```
+    # nginx-svc-lb.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: lb-service
+      labels:
+        app: nginx-app
+    spec:
+      selector:
+        app: nginx-app
+      type: LoadBalancer
+      ports:
+        - nodePort: 31000
+          port: 80
+          targetPort: 80
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f nginx-deploy.yaml
+    # kubectl create -f nginx-src-lb.yaml
+    ```
+
+- Check with kubectl command
+
+    ```
+    # kubectl get service -l app=nginx-app
+    ```
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete svc lb-service
+    # kubectl get pods
+    ```
+
+# ClusterIP
+
+## Concept
+
+- What is __*ClusterIP Services*__
+    > Access point ONLY within the cluster internal
+
+## Demo
+
+- Manifest file example
+
+    ```
+    # redis-master-deployment.yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: redis-master
+      labels:
+        app: redis
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: redis
+          role: master
+          tier: backend
+      template:
+        metadata:
+          labels:
+            app: redis
+            role: master
+            tier: backend
+      spec:
+        containers:
+        - name: master
+          image: k8s.gcr.io/redis:e2e
+          resources:
+            requests:
+              memeory: 100Mi
+          ports:
+          - containerPort: 6379
+    ```
+
+    ```
+    # redis-slave-deployment.yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: redis-slave
+      labels:
+        app: redis
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+          app: redis
+          role: slave
+          tier: backend
+      template:
+        metadata:
+          labels:
+            app: redis
+            role: slave
+            tier: backend
+      spec:
+        containers:
+        - name: slave
+          image: gcr.io/google_samples/gb-redisslave:v1
+          resources:
+            requests:
+              memeory: 100Mi
+          ports:
+          - containerPort: 6379
+    ```
+
+    ```
+    # redis-master-service.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: redis-master-svc
+      labels:
+        app: nginx-app
+        role: master
+        tier: backend
+    spec:
+      selector:
+        app: redis
+        role: master
+        tier: backen
+      type: ClusterIP
+      ports:
+        - port: 6379
+          targetPort: 6379
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f nginx-deploy.yaml
+    # kubectl create -f nginx-src-lb.yaml
+    ```
+
+- Check with kubectl command
+
+    ```
+    # kubectl get service -l app=nginx-app
+    ```
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete svc lb-service
+    # kubectl get pods
+    ```
 
 # Storage Volume
 
