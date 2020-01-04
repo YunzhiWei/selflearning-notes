@@ -954,7 +954,7 @@ kubectl [command] [TYPE] [NAME] [flags]
 - What is __*ClusterIP Services*__
     > Access point ONLY within the cluster internal
 
-## Demo
+## Demo 1
 
 - Manifest file example
 
@@ -1063,17 +1063,205 @@ kubectl [command] [TYPE] [NAME] [flags]
     # kubectl get pods
     ```
 
+## Demo 2 - Database Service
+
+- Manifest file example
+
+    ```
+    # dbpg-deployment.yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: dbpg-deploy
+      labels:
+        sys: clusterIP-Demo
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          sys: clusterIP-Demo
+          role: database
+          tier: backend
+      template:
+        metadata:
+          labels:
+            sys: clusterIP-Demo
+            role: database
+            tier: backend
+        spec:
+            containers:
+            - name: postgres
+            image: postgres:alpine
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 5432
+    ```
+
+    ```
+    # dbpg-service.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: dbpg-svc
+      labels:
+        sys: clusterIP-Demo
+        role: database
+        tier: backend
+    spec:
+      type: ClusterIP
+      selector:
+        sys: clusterIP-Demo
+        role: database
+        tier: backend
+      ports:
+        - port: 5432
+          targetPort: 5432
+    ```
+
+    ```
+    # client-pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: client
+      labels:
+        sys: clusterIP-Demo
+        role: application
+        tier: frontend
+    spec:
+      containers:
+      - name: client-psql
+        image: postgres:alpine
+        imagePullPolicy: IfNotPresent
+    ```
+
+- Deploy with kubectl command
+
+    ```
+    # kubectl create -f dbpg-deployment.yaml
+    # kubectl create -f dbpg-service.yaml
+    # kubectl create -f client-pod.yaml
+    ```
+
+- Check with kubectl command
+
+    ```
+    # kubectl get service -l sys=clusterIP-Demo
+    # kubectl get pod -l sys=clusterIP-Demo
+    ```
+
+- Check by go into Pod of DB
+
+    ```
+    # kubectl exec -it xxxxxxxx /bin/sh
+    ```
+
+    ```
+    / # psql -U postgres
+    ```
+
+    ```
+    postgres=# \l
+    postgres=# \d
+    ```
+
+- Check by go into Pod of Client
+
+    ```
+    # kubectl exec -it client /bin/sh
+    ```
+
+    ```
+    / # psql -h dbpg-svc -p 5432 -U postgres
+    ```
+
+    ```
+    postgres=# \l
+    postgres=# \d
+    ```
+
+- delete with Kubectl
+
+    ```
+    # kubectl delete po client
+    # kubectl delete -f dbpg-service.yaml
+    # kubectl delete -f dbpg-deployment.yaml
+    ```
+
 # Storage Volume
 
+## Senario & Background
+
+- Pods (Containers) are ephemeral and stateless
+
+## Concept
+
+- Volumes bring persistence to Pods
+- Advantage of Kubernetes volumes vs. Docker volumes
+    + Pod's volumes are shared by all the containers inside the same Podthe shared 
+    + Volumes are associated with the Pod's lifecycle, instead of the containers' lifecycle
+    + Kubernetes support many types of volumes
+- Volumes Types
+    + Ephemeral - same lifetime as Pods
+    + Durable - Beyond Pods lifetime
+- Volumes Drivers
+    + aws* (from Amazon)
+    + azure* (from Microsoft)
+    + gce* (from Google)
+    + fc (fibre channel)
+    + nfs
+    + iscsi
+    + local
+    + emptyDir
+    + hostPath
+    + configMap
+    + secret
+    + persistentVolumeClaim
+    + ... ...
+
 ## emptyDir volume
+
+### Feature
+
+- Empty directory is created when a Pod is assigned to a Node
+- Stays as long as the Pod is running
+- Will be deleted forever once the Pod is removed from a Node
+
+### Use case
+
+- Temporary space
+
 ## HostPath volume
+
+### Feature
+
+- Similar to docker volume
+- Mounts a file or a directory from the host node's filesystem into the Pods
+- Remains even after the Pods are terminated
+
 ## Persistent Volume & Persistent Volume Claim
 ## Static Volume vs Dynamic Volume
-
-# ConfigMap
+## ConfigMap
+## Secrets
 
 # DaemonSet
 
-# Secrets
-
 # Jobs
+
+# Ingress Network
+
+## Reference
+
+- [ubernetes Networking | Kubernetes Services, Pods & Ingress Networks | Kubernetes Training | Edureka](https://www.youtube.com/watch?v=OaXWwBLqugk&list=WL&index=27&t=7s)
+
+## Concept
+
+- What is __*Ingress Network*__
+    > __*Ingress Network*__ is a collection of rules that allow inbound connections, which can be configured to give service externally through reachable URLs, load balance traffic, or by offering name-based virtual hosting.
+
+    + Ingress is the most powerful way of exposing service
+    + Services and Pods have IPs ONLY routable within the cluster
+    + Ingress acts like an entry point to the Kubernetes cluster
+    + Ingress sits in front of multiple services and act as a 'Smart Rounter'
+    + Ingress is an API object that manages external access to the services in a cluster, usually HTTP
+
