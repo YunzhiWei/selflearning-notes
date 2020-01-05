@@ -1091,10 +1091,10 @@ kubectl [command] [TYPE] [NAME] [flags]
         spec:
             containers:
             - name: postgres
-            image: postgres:alpine
-            imagePullPolicy: IfNotPresent
-            ports:
-            - containerPort: 5432
+              image: postgres:alpine
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 5432
     ```
 
     ```
@@ -1231,6 +1231,36 @@ kubectl [command] [TYPE] [NAME] [flags]
 
 - Temporary space
 
+### Demo
+
+- Manifest file example
+
+    ```
+    # emptydir-pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: emptydir-pod
+    spec:
+        containers:
+        - name: postgres
+          image: postgres:alpine
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: empty-volume
+            mountPath: /thefolder
+        volumes:
+        - name: empty-volume
+          emptyDir: {}
+    ```
+
+- Check by go into Pod of Client
+
+    ```
+    # kubectl exec emptydir-pod df /thefolder
+    # kubectl describe po emptydir-pod
+    ```
+
 ## HostPath volume
 
 ### Feature
@@ -1239,8 +1269,170 @@ kubectl [command] [TYPE] [NAME] [flags]
 - Mounts a file or a directory from the host node's filesystem into the Pods
 - Remains even after the Pods are terminated
 
-## Persistent Volume & Persistent Volume Claim
-## Static Volume vs Dynamic Volume
+### Demo
+
+- Manifest file example
+
+    ```
+    # hostpath-pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: hostpath-pod
+    spec:
+        containers:
+        - name: postgres
+          image: postgres:alpine
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: hostpath-volume
+            mountPath: /thefolder
+        volumes:
+        - name: hostpath-volume
+          hostPath: 
+            path: /host-volume
+    ```
+
+- Check by go into Pod of Client
+
+    ```
+    # kubectl exec hostpath-pod df /thefolder
+    # kubectl describe po hostpath-pod
+    ```
+
+- Create new files inside the Pod and check result in Node
+- Create new files in Node and check the result in the Pod
+
+## Persistent Volume (PV) & Persistent Volume Claim (PVC)
+
+### Lifecycle
+
+- Provisioning
+- Binding
+- Using
+- Reclaiming
+
+### Provisioning
+
+- Static
+    > PV needs to be created before PVC
+
+    ```
+    # static-pv.yaml
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: pv-gce
+    spec:
+      capacity:
+        storage: 15Gi
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: slow
+      gcePersistentDisk:
+        pdName: my-disk-123
+        fsType: ext4
+    ```
+
+    ```
+    # static-pvc.yaml
+    apiVersion: v1
+    kind: PersistentVolumeClaime
+    metadata:
+      name: my-disk-claim
+    spec:
+      resources:
+        requests:
+          storage: 15Gi
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: slow
+    ```
+
+    ```
+    # pg-pvc.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: pg-pod
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:alpine
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: pvc-volume
+          mountPath: /thefolder
+      volumes:
+      - name: pvc-volume
+        persistentVolumeClaim: 
+          claimName: my-disk-claim
+    ```
+
+- Dynamic
+    > PC is created at the same time of PVC
+
+    ```
+    # storageclass-pv.yaml
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+        name: fast
+    provisioner: kubernetes.io/gce-pd
+    parameters:
+        type: pd-ssd
+    ```
+
+    ```
+    # dynamic-pvc1.yaml
+    apiVersion: v1
+    kind: PersistentVolumeClaime
+    metadata:
+      name: my-disk-claim-1
+    spec:
+      resources:
+        requests:
+          storage: 30Gi
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: fast
+    ```
+
+    ```
+    # dynamic-pvc2.yaml
+    apiVersion: v1
+    kind: PersistentVolumeClaime
+    metadata:
+      name: my-disk-claim-2
+    spec:
+      resources:
+        requests:
+          storage: 40Gi
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: fast
+    ```
+
+    ```
+    # pg-pvc.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: pg-pod
+    spec:
+        containers:
+        - name: postgres
+          image: postgres:alpine
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: pvc-volume-1
+            mountPath: /thefolder
+        volumes:
+        - name: pvc-volume-1
+          persistentVolumeClaim: 
+            claimName: my-disk-claim-1
+    ```
+
 ## ConfigMap
 ## Secrets
 
