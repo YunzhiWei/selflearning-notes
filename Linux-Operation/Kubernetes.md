@@ -1433,12 +1433,519 @@ kubectl [command] [TYPE] [NAME] [flags]
             claimName: my-disk-claim-1
     ```
 
-## ConfigMap
-## Secrets
+# ConfigMap
+
+## Background
+
+- to make container images more portable and flexible
+- by configuration from 
+    + configuration files
+    + command line arguments
+    + environment variables
+- in `INI`, `XML`, `JSON` formats
+
+## Caution
+
+- ConfigMap must be ready before Pods, which depend on the configuration, start.
+
+## Syntax
+
+```
+# kubectl create configMap <map-name> <data-source>
+```
+
+- `<data-source>`
+    + Path to dir/file: -- from-file
+    + Key-Value pair: --- from-literal
+
+## Demo 1 
+
+> create configMap from multiple files
+
+- TWO properties files in the folder `./configurationfolder`
+
+    1. game.properties
+        ```
+        lives=3
+        enemies=aliens
+        enemies.cheat=true
+        enemies.cheat.level=good
+        secret.lives=30
+        secret.allowed=true
+        ```
+
+    1. ui.properties
+        ```
+        color.good=purple
+        color.bad=yellow
+        ```
+
+- create configMap
+
+    ```
+    # kubectl create configmap game-config --from-file=configurationfolder
+    ```
+
+- check configMap
+
+    ```
+    # kubectl get configmaps -o wide
+    ```
+
+    ```
+    # kubectl get configmaps game-config -o yaml
+    apiVersion: V1
+    data:
+      game.properties: |-
+        lives=3
+        enemies=aliens
+        enemies.cheat=true
+        enemies.cheat.level=good
+        secret.lives=30
+        secret.allowed=true
+      ui.properties: |-
+        color.good=purple
+        color.bad=yellow
+    kind: ConfigMap
+    metadata
+      creationTimestamp: 2019-12-31T23:59:59Z
+      name: game-config
+      namespace: default
+      ... ...
+    ```
+
+## Demo 2 
+
+> create configMap from single file & access from Pod
+
+- THE properties file: `./redis-config-file`
+
+    ```
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru
+    ```
+
+- create configMap
+
+    ```
+    # kubectl create configmap redis-config-demo --from-file=redis-config-file
+    ```
+
+- access configMap from Pod through volume
+
+    ```
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: redis
+    spec:
+      container:
+      - name: redis
+        image: redis
+        volumeMounts:
+        - mountPath: /redis-config-mount
+          name: config-vol
+      volumes:
+      - name: config-vol
+        configMap:
+          name: redis-config-demo
+          items:
+          - key: redis-config-file
+            path: redis.conf
+    ```
+
+    ```
+    # kubectl exec redis cat /redis-config-mount/redis.conf
+    ```
+
+## Demo 3
+
+> create configMap with command line
+
+- create configMap
+
+    ```
+    # kubectl create configmap spcial-config-demo --from-literal=special.how=very
+    ```
+
+- check configMap
+
+    ```
+    # kubectl get configmaps -o wide
+    ```
+
+- access configMap from Pod through volume
+
+    ```
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: test-pod
+    spec:
+      container:
+      - name: test-container
+        image: alpine
+        command: [ "/bin/sh", "-c", "env" ]
+        env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config-demo
+              key: special.how
+      restartPolicy: Never
+    ```
+
+    ```
+    # kubectl logs test-pod | grep SPECIAL
+    SPECIAL_LEVEL_KEY=very
+    ```
+
+# Secrets
+
+## Background
+
+> similiar to ConfigMap but contain sensitive information
+
+## Concept
+
+> kubernetes object to handle small amount of sensitive data
+
+> reduce the risk of exposing sensitive data
+
+## Caution
+
+> size limitation: 1MB
+
+## Syntax
+
+```
+# kubectl create secret [TYPE] [NAME] [DATA]
+```
+
+- `[TYPE]`
+    * generic: File, Directory, Literal Value
+    * docker-registry
+    * tls
+- `[NAME]`
+- `[DATA]`
+    * Path to dir/file: --from-file
+    * Key-Value pair: --from-literal
+
+## Demo 1
+
+> create with kubectl
+
+- create files
+
+    ```
+    # echo -n 'admin' > ./username.txt
+    # echo -n 'qweasdzxc123*()' > ./password.txt
+    ```
+
+- create secret
+
+    ```
+    # kubectl create secret generic db-user-password --from-file=./username.text --from-file=./password.txt
+    ```
+
+- check secret
+
+    ```
+    # kubectl get secrets
+    # kubectl describe secrets db-user-password
+    Name:           db-user-password
+    Namespace:      default
+    Labels:         <none>
+    Annotations:    <none>
+
+    Type:           Opaque
+
+    Data
+    ===
+    password.txt
+    username.txt
+    ```
+
+## Demo 2
+
+> create manually
+
+- get value
+
+    ```
+    # echo -n 'admin' | base64
+    <hash-of-username>
+    # echo -n 'qweasdzxc123*()' | base64
+    <has-of-password>
+    ```
+
+- create manifest
+
+    ```
+    # mysecret.yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: mysecret
+    type: Opaque
+    data:
+      username: <hash-of-uesrname>
+      password: <hash-of-password>
+    ```
+
+    ```
+    # kubectl create -f mysecret.yaml
+    ```
+
+## Demo 3
+
+> Decoding Secrets (continue from Demo 2)
+
+- manifest 
+
+    ```
+    # kubectl get secrets mysecret -o yaml
+    apiVersion: v1
+    data:
+      password: <hash-of-password>
+      username: <hash-of-username>
+    kind: Secret
+    metadata:
+      name: mysecret
+      ... ...
+    type: Opaque
+    ```
+ 
+ - decode
+
+    ```
+    # echo '<hash-of-username>' | base64 --decode
+    admin
+    ```
+
+## Demo 4
+
+> consuming secrets in Pod as files (continue from Demo 2)
+
+- manifest
+
+    ```
+    # mysecret-pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: mypod
+    spec:
+      containers:
+      - name: mypod
+        image: redis
+        volumeMounts:
+        - name: foo
+          mountPath: "etc/foo"
+          readOnly: true
+      volumes
+      - name: foo
+        secret
+          secretName: mysecret
+    ```
+
+- create Pod
+
+    ```
+    # kubectl create -f mysecret-pod.yaml
+    ```
+
+- check volume mount
+
+    ```
+    # kubectl exec mypod ls /etc/foo
+    password
+    username
+    ```
+
+    ```
+    # kubectl exec mypod ls /etc/foo/username
+    admin
+    ```
+
+## Demo 5
+
+> consuming secrets in Pod as Env (continue from Demo 2)
+
+- manifest
+
+    ```
+    # env-secret-pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: env-secret-pod
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: mypod
+        image: redis
+        env:
+          - name: SECRET_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: username
+          - name: SECRET_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: password
+    ```
+
+- create Pod
+
+    ```
+    # kubectl create -f env-secret-pod.yaml
+    ```
+
+- check volume mount
+
+    ```
+    # kubectl exec env-secret-pod env | grep SECRET
+    SECRET_USERNAME=admin
+    SECRET_PASSWORD=qweasdzxc123*()
+    ```
 
 # DaemonSet
 
+> Make sure all nodes or a subset of Nodes in cluster have a copy of the target Pod
+
+## Use Cases
+
+- Node monitoring: collectd
+- Log collection: fluentd
+- Storage daemon: ceph
+
+## Demo
+
+- Manifest
+
+    ```
+    # fluentd-ds.yaml
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: fluentd-ds
+    spec:
+      template:
+        metadata: 
+          labels:
+            name: fluentd
+        spec:
+          containers:
+          - name: fluentd
+            image: gcr.io/google-containers/fluentd-elasticsearch:1.20
+      selector:
+        matchLabels
+        - name: fluentd
+    ```
+
+- create daemonset
+
+    ```
+    # kubectl create -f fluentd-ds.yaml
+    ```
+
+- check daemonset
+
+    ```
+    # kubectl get ds
+    # kubectl describe ds fluentd-ds
+    ```
+
+- check Nodes
+
+    ```
+    # kubectl get no
+    ```
+
+- check Pods (created by daemonset)
+
+    ```
+    # kubectl get po -o wide
+    ```
+
+- delete daemonset
+
+    ```
+    # kubectl delete ds fluentd-ds
+    ```
+
 # Jobs
+
+## Type
+
+- Jobs
+    > Run to complete
+
+- CronJob
+    > Scheduled
+
+## Feature
+
+- Each job creates one or more Pods
+- Ensure they are successfully terminated
+- Job controller restarts or rescheduled if a Pod or Node fails during executiong
+- Can run multiple Pods in parallel
+- Can scale up using kubectl scale command
+
+## Use Cases
+
+- One time initialization of resources such as Database
+- Multiple workers to process messages in queue
+
+## Demo
+
+- manifest
+
+    ```
+    # countdown-job.yaml
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: countdown
+    spec:
+      template:
+        metadata:
+          name: countdown
+        spec:
+          containers
+          - name: counter
+            image: alpine
+            command:
+            - "bin/bash"
+            - "-c"
+            - "for i in 9 8 7 6 5 4 3 2 1 ; do each $i ; done"
+          restartPolicy: Never
+    ```
+
+- start the job
+
+  ```
+  # kubectl create -f countdown-job.yaml
+  ```
+
+- check the job
+
+  ```
+  # kubectl get jobs
+  # kubectl describe jobs countdown
+  # kubectl get po
+  # kubectl logs countdown-xxxxxxx
+  ```
+
+- clean the job
+
+  ```
+  # kubectl delete jobs countdown
+  # kubectl get po
+  ```
 
 # Ingress Network
 
