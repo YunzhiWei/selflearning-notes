@@ -646,7 +646,7 @@ kubectl [command] [TYPE] [NAME] [flags]
         matchLabels:
             app: nginx-app
         matchExpressions:
-            - {key: tier, operator: in, values: [frontend]}
+            - {key: tier, operator: In, values: [frontend]}
       template:
         metadata:
           name: nginx-pod

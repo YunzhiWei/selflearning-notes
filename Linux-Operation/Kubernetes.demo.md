@@ -31,15 +31,57 @@
 |----|----|----|----|----|----|----|----|
 |Master|k8s-master-1|master1.k8s.com|192.168.153.130|CentOS 7|4G|2|20GB|
 |Worker|k8s-worker-1|worker1.k8s.com|192.168.153.131|CentOS 7|4G|2|20GB|
-  
-### Worker Nodes
 
-#### Pre-requests
+### Master & Worker Nodes
 
-- Docker Images: `Alpine`, `Nodejs`, `Nginx`, `Postgres`
-- Docker Compose
-- Nodejs
-- Git
+#### Git
+
+```
+# yum install git
+```
+
+#### WGET
+
+```
+# yum install -y wget
+```
+
+#### Node & NPM
+
+> download and install npm binary pakage
+```
+# wget https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.xz
+
+# tar -xvf node-v10.15.3-linux-x64.tar.xz
+
+# ln -s ~/node-v10.15.3-linux-x64/bin/node /usr/bin/node
+
+# ln -s ~/node-v10.15.3-linux-x64/bin/npm /usr/bin/npm
+
+# npm -v
+# node -v
+
+# vim /etc/profile
+# cat /etc/profile
+```
+
+> `/etc/profile`
+```
+export NODE_PATH="/root/node-v10.15.3-linux-x64"
+export PATH=$NODE_PATH/bin:$PATH
+```
+
+#### reboot the server
+
+```
+# reboot
+```
+
+#### install global npm packages
+
+```
+# npm install -g yarn gulp cross-env rimraf
+```
 
 #### Prepare `~/projects/clone.athena.sh`
 
@@ -58,6 +100,13 @@
 
 git clone https://github.com/YunzhiWei/dockerimages.git
 ```
+
+### Worker Nodes
+
+#### Pre-requests
+
+- Docker Images: `Alpine`, `Nodejs`, `Nginx`, `Postgres`
+- Docker Compose
 
 # Demo - Docker Compose
 
@@ -112,3 +161,228 @@ git clone https://github.com/YunzhiWei/dockerimages.git
 - Each to setup production environment
 - and more ...
 
+# Demo - K8S Pod
+
+## Prerequest
+
+- Required images are ready in Worker Nodes
+- Target folders exist in Workder Nodes
+
+## Master Node
+
+1. Clone
+
+    ```
+    # cd ~/projects
+    # sh clone.dockerimages.sh
+    # ls
+    # cd dockerimages/devops
+    # ls
+    ```
+    > Source code should be ready
+
+1. Run
+
+    ```
+    # kubectl create -f dbpg-pod.yaml
+    ```
+
+1. Check
+
+    ```
+    # kubectl get po
+    # kubectl exec -it dbpg-pod sh
+    ```
+
+    ```
+    # ls /var/lib/postgresql/data
+    # ls /docker-entrypoint-initdb.d
+    ```
+
+    ```
+    # psql -U docker -d docker
+    ```
+
+    ```
+    # \d
+    # \l
+    # select * from dbt_maindata;
+    ```
+
+    ```
+    # \q
+    ```
+
+    ```
+    # exit
+    ```
+
+1. remove
+
+    ```
+    # kubectl delete -f dbpg-pod.yaml
+    # kubectl get po
+    ```
+
+    ```
+    # cd ../..
+    # rm -rf dockerimages
+    ```
+
+# Demo - K8S Deployment
+
+## Prerequest
+
+- Required images are ready in Worker Nodes
+- Target folders exist in Workder Nodes
+
+## Master Node
+
+1. Clone
+
+    ```
+    # cd ~/projects
+    # sh clone.dockerimages.sh
+    # ls
+    # cd dockerimages/devops
+    # ls
+    ```
+    > Source code should be ready
+
+1. Run
+
+    ```
+    # kubectl create -f dbpg-deploy.yaml
+    ```
+
+1. Check
+
+    ```
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    # kubectl exec -it dbpg-pod-<POD-ID> sh
+    ```
+
+    ```
+    # ls /var/lib/postgresql/data
+    # ls /docker-entrypoint-initdb.d
+    ```
+
+    ```
+    # psql -U docker -d docker
+    ```
+
+    ```
+    # \d
+    # \l
+    # select * from dbt_maindata;
+    ```
+
+    ```
+    # \q
+    ```
+
+    ```
+    # exit
+    ```
+
+1. remove
+
+    ```
+    # kubectl delete -f dbpg-deploy.yaml
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    ```
+
+    ```
+    # cd ../..
+    # rm -rf dockerimages
+    ```
+
+# Demo - K8S Service
+
+## Prerequest
+
+- Required images are ready in Worker Nodes
+- Target folders exist in Workder Nodes
+
+## Master Node
+
+1. Clone
+
+    ```
+    # cd ~/projects
+    # sh clone.dockerimages.sh
+    # ls
+    # cd dockerimages/devops
+    # ls
+    ```
+    > Source code should be ready
+
+1. Update Pod's port
+
+    ```
+    # vi dbpg-pod.yaml
+    ```
+
+    > remove the following lines
+    ```
+    ports:
+    - containerPort: 5432
+      hostPort: 5432
+      protocol: TCP
+    ```
+
+1. Run
+
+    ```
+    # kubectl create -f dbpg-deploy.yaml
+    # kubectl create -f dbpg-svc-ci.yaml
+    # kubectl create -f dbpg-pod.yaml
+    ```
+
+1. Check
+
+    ```
+    # kubectl get service
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    # kubectl exec -it dbpg-pod sh
+    ```
+
+    ```
+    # psql -h dbpg-svc-ci -U docker -d docker
+    ```
+
+    ```
+    # \d
+    # \l
+    # select * from dbt_maindata;
+    ```
+
+    ```
+    # \q
+    ```
+
+    ```
+    # exit
+    ```
+
+1. remove
+
+    ```
+    # kubectl delete -f dbpg-pod.yaml
+    # kubectl delete -f dbpg-service.yaml
+    # kubectl delete -f dbpg-deploy.yaml
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    ```
+
+    ```
+    # cd ../..
+    # rm -rf dockerimages
+    ```
