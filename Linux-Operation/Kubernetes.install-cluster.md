@@ -20,7 +20,7 @@ This documentation guides you in setting up a cluster with one master node and o
 
     |Role|Hostname|FQDN|IP|OS|RAM|CPU|Storage|
     |----|----|----|----|----|----|----|----|
-    |Master|k8s-master-1|master1.k8s.com |192.168.153.130|CentOS 7|4G|2|20GB|
+    |Master|k8s-master-1|master1.k8s.com|192.168.153.130|CentOS 7|4G|2|20GB|
     |Worker|k8s-worker-1|worker1.k8s.com|192.168.153.131|CentOS 7|4G|2|20GB|
 
 - Installation
