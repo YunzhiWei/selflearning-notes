@@ -138,6 +138,15 @@ git clone https://github.com/YunzhiWei/dockerimages.git
     ```
     > 
 
+1. Remove
+
+    ```
+    # docker stop dockerimages_proxy_1 dockerimages_service_1 dockerimages_dbpg_1
+    # docker rm dockerimages_proxy_1 dockerimages_service_1 dockerimages_dbpg_1
+
+    # docker network rm dockerimages_bridgenet
+    ```
+
 ## Hosting Machine
 
 1. Open Web Browser (Chrome)
@@ -301,7 +310,7 @@ git clone https://github.com/YunzhiWei/dockerimages.git
     # rm -rf dockerimages
     ```
 
-# Demo - K8S Service
+# Demo - K8S Service of ClusterIP
 
 ## Prerequest
 
@@ -354,7 +363,7 @@ git clone https://github.com/YunzhiWei/dockerimages.git
     ```
 
     ```
-    # psql -h dbpg-svc-ci -U docker -d docker
+    # psql -h dbpg -U docker -d docker
     ```
 
     ```
@@ -375,7 +384,7 @@ git clone https://github.com/YunzhiWei/dockerimages.git
 
     ```
     # kubectl delete -f dbpg-pod.yaml
-    # kubectl delete -f dbpg-service.yaml
+    # kubectl delete -f dbpg-svc-ci.yaml
     # kubectl delete -f dbpg-deploy.yaml
     # kubectl get deploy
     # kubectl get rs
@@ -386,3 +395,138 @@ git clone https://github.com/YunzhiWei/dockerimages.git
     # cd ../..
     # rm -rf dockerimages
     ```
+
+# Demo - K8S Service of NodePort
+
+## Prerequest
+
+- Required images are ready in Worker Nodes
+- Target folders exist in Workder Nodes
+
+## Master Node
+
+1. Clone
+
+    ```
+    # cd ~/projects
+    # sh clone.dockerimages.sh
+    # ls
+    # cd dockerimages/devops
+    # ls
+    ```
+    > Source code should be ready
+
+1. Run
+
+    ```
+    # kubectl create -f dbpg-deploy.yaml
+    # kubectl create -f dbpg-svc-ci.yaml
+    # kubectl create -f backend-deploy.yaml
+    # kubectl create -f backend-svc-ci.yaml
+    # kubectl create -f frontend-deploy.yaml
+    # kubectl create -f frontend-svc-np.yaml
+    ```
+
+1. Check - in Master Node
+
+    ```
+    # kubectl get service
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    ```
+
+1. Check - in Hosting Environment
+
+    - Open Web Browser (Chrome) in hosting environment
+    - URL: `http://static.office.com:30880`
+    - URL: `http://api.office.com:30880`
+    - URL: `http://<master-node-ip>:30880`
+    - URL: `http://<worker-node-ip>:30880`
+
+1. Upgrade - Prepare in Worker Node
+
+    ```
+    # cd webproxy/www
+    # vi index.html
+    ```
+    > update some contents
+
+    ```
+    # cd ..
+    # vi dockerbuild.sh
+    ```
+    > update the version number
+
+    ```
+    # sh dockerbuild.sh
+    # docker images
+    ```
+    > check the images and `IMAGE ID`
+
+1. Upgrade - in Master Node
+
+    ```
+    # kubectl get deploy
+    ```
+
+    ```
+    # kubectl edit deploy frontend-dp
+    ```
+    > update the image version number
+
+    ```
+    # kubectl get po -o wide
+    # kubectl get deploy
+    # kubectl describe deploy frontend-dp
+    ```
+
+
+
+1. Rollback
+
+    ```
+    # kubectl rollout undo deployment/nginx-deployment
+    ```
+
+1. remove
+
+    ```
+    # kubectl delete -f frontend-svc-np.yaml
+    # kubectl delete -f frontend-deploy.yaml
+    # kubectl delete -f backend-svc-ci.yaml
+    # kubectl delete -f backend-deploy.yaml
+    # kubectl delete -f dbpg-svc-ci.yaml
+    # kubectl delete -f dbpg-deploy.yaml
+    # kubectl delete -f dbpg-pod.yaml
+    ```
+
+    ```
+    # kubectl get service
+    # kubectl get deploy
+    # kubectl get rs
+    # kubectl get po
+    ```
+
+    ```
+    # cd ../..
+    # rm -rf dockerimages
+    ```
+# Notice
+
+> Check network if docker compose has any problem.
+
+```
+# docker network ls
+# docker network rm dockerimages_bridgenet
+```
+
+# Comments
+
+> `Docker Compose` is machine based.
+
+> `K8S` is cluster based.
+
+> Compare to `Docker Compose`, `K8S` provides more powerfule abilities (HA, Upgrade/Downgrade with zero downtime), but requires more resources.
+
+> `K8S` needs more yaml files, but will save more long term operation jobs in production environment.
