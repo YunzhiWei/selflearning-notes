@@ -2,6 +2,7 @@
 
 - [kubernetes安装（基于CentOS7，kubeadm）](https://www.cnblogs.com/pascall/p/10675545.html)
 - [kubernetes1.13.5安装部署](https://www.cnblogs.com/doufy/p/10730812.html)
+- [使用Kubeadm(1.13+)快速搭建Kubernetes集群](https://www.cnblogs.com/RainingNight/p/using-kubeadm-to-create-a-cluster-1-13.html)
 
 # What is Kubernetes
 
