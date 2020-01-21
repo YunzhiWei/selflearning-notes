@@ -50,24 +50,29 @@
 
 > download and install npm binary pakage
 ```
-# wget https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.xz
+# wget https://nodejs.org/dist/v12.14.1/node-v12.14.1-linux-x64.tar.xz
 
-# tar -xvf node-v10.15.3-linux-x64.tar.xz
+# tar -xvf node-v12.14.1-linux-x64.tar.xz
 
-# ln -s ~/node-v10.15.3-linux-x64/bin/node /usr/bin/node
+# ln -s ~/node-v12.14.1-linux-x64/bin/node /usr/bin/node
 
-# ln -s ~/node-v10.15.3-linux-x64/bin/npm /usr/bin/npm
+# ln -s ~/node-v12.14.1-linux-x64/bin/npm /usr/bin/npm
 
 # npm -v
-# node -v
+6.13.4
 
-# vim /etc/profile
+# node -v
+v12.14.1
+```
+
+```
+# vi /etc/profile
 # cat /etc/profile
 ```
 
-> `/etc/profile`
+> Add the follow lines at the end of `/etc/profile`
 ```
-export NODE_PATH="/root/node-v10.15.3-linux-x64"
+export NODE_PATH="/root/node-v12.14.1-linux-x64"
 export PATH=$NODE_PATH/bin:$PATH
 ```
 
@@ -89,23 +94,26 @@ export PATH=$NODE_PATH/bin:$PATH
 # cd ~
 # mkdir projects
 # cd projects
-# vi clone.dockerimages.sh
-# cat clone.dockerimages.sh
-```
-
-> `clone.dockerimages.sh`
-```
+# cat >>clone.dockerimages.sh<<EOF
 #!/bin/bash 
-#publish service and api
-
 git clone https://github.com/YunzhiWei/dockerimages.git
+EOF
 ```
 
 ### Worker Nodes
 
 #### Pre-requests
 
-- Docker Images: `Alpine`, `Nodejs`, `Nginx`, `Postgres`
+- Docker Images: 
+
+```
+docker pull busybox
+docker pull alpine
+docker pull node:12.14.1-alpine
+docker pull nginx:1.17.6-alpine
+docker pull postgres:12.1-alpine
+```
+
 - Docker Compose
 
 # Demo - Docker Compose
@@ -417,6 +425,11 @@ git clone https://github.com/YunzhiWei/dockerimages.git
     > Source code should be ready
 
 1. Run
+
+    ```
+    # kubectl get all
+    # watch !!
+    ```
 
     ```
     # kubectl create -f dbpg-deploy.yaml
