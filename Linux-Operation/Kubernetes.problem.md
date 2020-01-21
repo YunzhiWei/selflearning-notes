@@ -8,6 +8,7 @@
 - [搭建Kubernetes集群踩坑日志之coreDNS 组件出现CrashLoopBackOff问题的解决](https://blog.csdn.net/u011663005/article/details/87937800)
 - [使用Kubeadm(1.13+)快速搭建Kubernetes集群](https://www.cnblogs.com/RainingNight/p/using-kubeadm-to-create-a-cluster-1-13.html)
 - [coredns pods have CrashLoopBackOff or Error state](https://stackoverflow.com/questions/53075796/coredns-pods-have-crashloopbackoff-or-error-state)
+- [Fresh deploy with CoreDNS not resolving any dns lookup](https://github.com/kubernetes/kubeadm/issues/1056)
 
 ## 问题说明
 

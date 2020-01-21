@@ -61,8 +61,8 @@ This documentation guides you in setting up a cluster with one master node and o
 
   ```
   # cat >>/etc/hosts<<EOF
-  192.168.153.130 master1.k8s.com k8s-master-1
-  192.168.153.131 worker1.k8s.com k8s-worker-1
+  192.168.83.131 master1.k8s.com k8s-master-1
+  192.168.83.132 worker1.k8s.com k8s-worker-1
   EOF
   ```
 
@@ -90,8 +90,10 @@ This documentation guides you in setting up a cluster with one master node and o
   ```
 
   ```
-  # yum install -y -q docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+  # yum install -y -q docker-ce docker-ce-cli containerd.io > /dev/null 2>&1
   ```
+
+- 启动 Docker
 
   ```
   # systemctl enable docker
@@ -101,17 +103,18 @@ This documentation guides you in setting up a cluster with one master node and o
 - 使用中国区官方镜像
 
   ```
-  # vi /etc/docker/daemon.json
-  # cat /etc/docker/daemon.json
-  ```
-
-  > daemon.json
-
-  ```
+  # cat > /etc/docker/daemon.json <<EOF
   {
     "registry-mirrors": ["https://registry.docker-cn.com"]
   }
+  EOF
   ```
+
+  ```
+  # cat /etc/docker/daemon.json
+  ```
+
+- 重启 Docker
 
   ```
   # systemctl daemon-reload
@@ -121,6 +124,18 @@ This documentation guides you in setting up a cluster with one master node and o
 
   ```
   # reboot
+  ```
+
+  ```
+  # docker ps
+  # docker images
+  # docker version
+  Client ...
+    Version:           19.03.5
+    API version:       1.40
+    ...
+  Server ...
+    ...
   ```
 
 - Install Docker Compose
@@ -135,6 +150,7 @@ This documentation guides you in setting up a cluster with one master node and o
 
   ```
   # docker-compose --version
+  docker-compose version 1.22.0, build f46880fe
   ```
 
 - Disable SELinux
@@ -181,14 +197,13 @@ This documentation guides you in setting up a cluster with one master node and o
   gpgcheck=1
   repo_gpgcheck=1
   gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
-  exclude=kube*
   EOF
   ```
 
 - Install Kubernetes
 
   ```
-  # yum install -y kubeadm kubelet kubectl --disableexcludes=kubernetes
+  # yum install -y kubeadm kubelet kubectl
   ```
 
 - Enable and Start kubelet service
@@ -203,14 +218,19 @@ This documentation guides you in setting up a cluster with one master node and o
 ### Initialize Kubernetes Cluster
 
 ```
-# kubeadm init --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --ignore-preflight-errors=swap --ignore-preflight-errors=SystemVerification
+# kubeadm init --apiserver-advertise-address=<master-ip-address> --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --ignore-preflight-errors=swap --ignore-preflight-errors=SystemVerification
+```
+
+```
+# kubeadm init --apiserver-advertise-address=192.168.83.131 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --ignore-preflight-errors=swap --ignore-preflight-errors=SystemVerification
 ```
 
 > Response
 
 ```
-Your Kubernetes control-plane has initialized successfully!
-
+... ...
+[init] Using Kubernetes version: v1.17.1
+... ...
 To start using your cluster, you need to run the following as a regular user:
 
   mkdir -p $HOME/.kube
@@ -223,8 +243,8 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 192.168.153.130:6443 --token j0ik2o.dhfwbm5oed7eebld \
-    --discovery-token-ca-cert-hash sha256:22af0bc3194f850eda5661125770be1f5ec3a2219361d32e0298f01d4561012a 
+kubeadm join 192.168.83.131:6443 --token mk4c2e.q31myp7crqwk592u \
+    --discovery-token-ca-cert-hash sha256:24b848754ddea91ce50e9de1ec03e8f3b7e41f260d3e60944a6e68ddc9deddfc 
 ```
 
 ### Follow the instruction in the command response
@@ -265,7 +285,7 @@ kubeadm join 192.168.153.130:6443 --token j0ik2o.dhfwbm5oed7eebld \
 - Join the cluster
 
   ```
-  # kubeadm join 192.168.153.130:6443 --token j0ik2o.dhfwbm5oed7eebld --discovery-token-ca-cert-hash sha256:22af0bc3194f850eda5661125770be1f5ec3a2219361d32e0298f01d4561012a 
+  # kubeadm join 192.168.83.131:6443 --token mk4c2e.q31myp7crqwk592u --discovery-token-ca-cert-hash sha256:24b848754ddea91ce50e9de1ec03e8f3b7e41f260d3e60944a6e68ddc9deddfc
   ```
 
 - check
