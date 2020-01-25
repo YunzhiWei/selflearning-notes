@@ -411,6 +411,28 @@ docker pull postgres:12.1-alpine
 - Required images are ready in Worker Nodes
 - Target folders exist in Workder Nodes
 
+## Worker Node
+
+1. update source code to make difference for different version
+
+    ```
+    # vi webproxy/www/index.html
+    ```
+
+1. update dockerbuild script to set version number
+
+    ```
+    # vi webproxy/dockerbuild.sh
+    ```
+
+1. build docker images for different version
+
+    ```
+    # yarn build:proxy
+    # docker images
+    ```
+> prepare at least 5 images for different versions: `0.0.1` ~ `0.0.5`
+
 ## Master Node
 
 1. Clone
@@ -427,26 +449,14 @@ docker pull postgres:12.1-alpine
 1. Run
 
     ```
-    # kubectl get all
+    # kubectl get all -o wide --all-namespaces
     # watch !!
     ```
 
     ```
-    # kubectl create -f dbpg-deploy.yaml
-    # kubectl create -f dbpg-svc-ci.yaml
-    # kubectl create -f backend-deploy.yaml
-    # kubectl create -f backend-svc-ci.yaml
-    # kubectl create -f frontend-deploy.yaml
-    # kubectl create -f frontend-svc-np.yaml
-    ```
-
-1. Check - in Master Node
-
-    ```
-    # kubectl get service
-    # kubectl get deploy
-    # kubectl get rs
-    # kubectl get po
+    # kubectl create -f dbpg.yaml
+    # kubectl create -f backend.yaml
+    # kubectl create -f frontend.yaml
     ```
 
 1. Check - in Hosting Environment
@@ -457,74 +467,216 @@ docker pull postgres:12.1-alpine
     - URL: `http://<master-node-ip>:30880`
     - URL: `http://<worker-node-ip>:30880`
 
-1. Upgrade - Prepare in Worker Node
+    > when frontend-deploy is created without frontend-svc-*, the web pages are still available at the following URL
+
+    - URL: `http://static.office.com`
+    - URL: `http://api.office.com`
+    - URL: `http://<worker-node-ip>`
+
+1. Upgrade by `update` & `apply` yaml file - in Master Node
 
     ```
-    # cd webproxy/www
-    # vi index.html
-    ```
-    > update some contents
-
-    ```
-    # cd ..
-    # vi dockerbuild.sh
-    ```
-    > update the version number
-
-    ```
-    # sh dockerbuild.sh
-    # docker images
-    ```
-    > check the images and `IMAGE ID`
-
-1. Upgrade - in Master Node
-
-    ```
-    # kubectl get deploy
-    ```
-
-    ```
-    # kubectl edit deploy frontend-dp
-    ```
-    > update the image version number
-
-    ```
-    # kubectl get po -o wide
-    # kubectl get deploy
     # kubectl describe deploy frontend-dp
     ```
 
+    > here are some options and commands to upgrade
 
+    ```
+    # kubectl apply -f frontend-deploy.yaml
+    ```
+    ```
+    # kubectl edit deploy frontend-dp
+    ```
+    > add `kubernetes.io/change-cause: "Release Version 0.0.1"` under `annotations`
+    ```
+    # kubectl set image deploy frontend-dp <container_name>=<image_name>:<version>
+    ```
+
+    ```
+    # kubectl describe deploy frontend-dp
+    # kubectl rollout status deploy frontend-dp
+    # kubectl rollout history deploy frontend-dp
+    ```
 
 1. Rollback
 
     ```
-    # kubectl rollout undo deployment/nginx-deployment
+    # kubectl rollout undo deploy frontend-dp --to-revision=2
+    ```
+
+1. Pause & resume the upgrading
+
+    ```
+    # kubectl rollout pause deploy frontend-dp
+    ```
+    ```
+    # kubectl rollout resume deploy frontend-dp
     ```
 
 1. remove
 
     ```
-    # kubectl delete -f frontend-svc-np.yaml
-    # kubectl delete -f frontend-deploy.yaml
-    # kubectl delete -f backend-svc-ci.yaml
-    # kubectl delete -f backend-deploy.yaml
-    # kubectl delete -f dbpg-svc-ci.yaml
-    # kubectl delete -f dbpg-deploy.yaml
-    # kubectl delete -f dbpg-pod.yaml
-    ```
-
-    ```
-    # kubectl get service
-    # kubectl get deploy
-    # kubectl get rs
-    # kubectl get po
+    # kubectl delete -f frontend.yaml
+    # kubectl delete -f backend.yaml
+    # kubectl delete -f dbpg.yaml
     ```
 
     ```
     # cd ../..
     # rm -rf dockerimages
     ```
+
+# Demo - Ingress (Follow the instruction from `[ Kube 32 ] Set up Traefik Ingress on kubernetes Bare Metal Cluster`)
+
+## Reference
+
+[Kubernetes Ingress Controller](https://docs.traefik.io/v1.7/user-guide/kubernetes/)
+
+[Containous 
+Traefik](https://github.com/containous/traefik/tree/v1.7/examples/k8s)
+
+## Ingress Controller - Traefik (Step 1)
+
+1. clone traefik
+
+```
+# git clone https://github.com/containous/traefik.git
+# cd traefik
+# git checkout -b v1.7 origin/v1.7
+# cd example/k8s
+```
+
+1. apply rbac role and role binding
+
+```
+# kubectl apply -f traefik-rbac.yaml
+```
+
+```
+# kubectl describe clusterrole traefik-ingress-controller -n kube-system
+```
+
+1. apply daemonset
+
+```
+# kubectl apply -f traefik-ds.yaml
+```
+
+```
+# kubectl get all -n kube-system | grep traefik
+```
+
+## Start Nginx (Step 2 - without port setting)
+
+```
+# kubectl create -f nginx-demo-ingress.yaml
+```
+
+```
+# kubectl get po
+```
+
+```
+# kubectl expose deploy nginx-demo-dp --port 80
+```
+
+```
+# kubectl describe service nginx-demo-dp
+```
+
+## Ingress Resource (Step 3)
+
+```
+# kubectl create -f ingress-resource.yaml
+```
+
+```
+# kubectl get ing
+# kubectl describe ing ingress-resource
+```
+
+## Clean up
+
+```
+# kubectl delete ing ingress-resource
+# kubectl delete svc nginx-demo-dp
+# kubectl delete deploy nginx-demo-dp
+
+# kubectl delete clusterrole traefik-ingress-controller
+# kubectl delete clusterrolebinding traefik-ingress-controller
+```
+
+## Ingress Controller - Nginx (replacement option of Traefik)
+
+[nginxinc
+/
+kubernetes-ingress](https://github.com/nginxinc/kubernetes-ingress)
+[Installation with Manifests](https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-manifests/)
+
+# Demo - Ingress (Step 1 is same)
+
+## Reference
+
+[Kubernetes Ingress Controller](https://docs.traefik.io/v1.7/user-guide/kubernetes/)
+
+[Containous 
+Traefik](https://github.com/containous/traefik/tree/v1.7/examples/k8s)
+
+## Ingress Controller - Traefik (Step 1)
+
+1. clone traefik
+
+```
+# git clone https://github.com/containous/traefik.git
+# cd traefik
+# git checkout -b v1.7 origin/v1.7
+# cd example/k8s
+```
+
+1. apply rbac role and role binding
+
+```
+# kubectl apply -f traefik-rbac.yaml
+```
+
+```
+# kubectl describe clusterrole traefik-ingress-controller -n kube-system
+```
+
+1. apply daemonset
+
+```
+# kubectl apply -f traefik-ds.yaml
+```
+
+```
+# kubectl get all -n kube-system | grep traefik
+```
+
+## Start Ingress Resource (with Deployment & clusterIP Service)
+
+```
+# kubectl create -f ingress-demo.yaml
+```
+
+```
+# kubectl get po
+# kubectl get svc
+# kubectl get ing
+# kubectl describe ing ingress-resource
+```
+
+## Clean up
+
+```
+# kubectl delete ing ingress-resource
+# kubectl delete svc ingress-demo-svc-ci
+# kubectl delete deploy ingress-demo-dp
+
+# kubectl delete clusterrole traefik-ingress-controller
+# kubectl delete clusterrolebinding traefik-ingress-controller
+```
+
 # Notice
 
 > Check network if docker compose has any problem.

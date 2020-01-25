@@ -1189,6 +1189,15 @@ kubectl [command] [TYPE] [NAME] [flags]
     # kubectl delete -f dbpg-deployment.yaml
     ```
 
+# Ingress
+
+## Concept
+
+### Ingress Resource
+
+### Ingress Controller
+
+
 # Storage Volume
 
 ## Senario & Background
