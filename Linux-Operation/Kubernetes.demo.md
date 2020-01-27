@@ -673,6 +673,9 @@ Traefik](https://github.com/containous/traefik/tree/v1.7/examples/k8s)
 # kubectl delete svc ingress-demo-svc-ci
 # kubectl delete deploy ingress-demo-dp
 
+# kubectl delete -f traefik-ds.yaml
+# kubectl delete -f traefik-rbac.yaml
+
 # kubectl delete clusterrole traefik-ingress-controller
 # kubectl delete clusterrolebinding traefik-ingress-controller
 ```
