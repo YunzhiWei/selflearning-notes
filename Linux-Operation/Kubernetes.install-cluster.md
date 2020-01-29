@@ -63,6 +63,7 @@ This documentation guides you in setting up a cluster with one master node and o
   # cat >>/etc/hosts<<EOF
   192.168.83.131 master1.k8s.com k8s-master-1
   192.168.83.132 worker1.k8s.com k8s-worker-1
+  192.168.83.134 worker2.k8s.com k8s-worker-2
   EOF
   ```
 
@@ -288,6 +289,28 @@ kubeadm join 192.168.83.131:6443 --token mk4c2e.q31myp7crqwk592u \
   # kubeadm join 192.168.83.131:6443 --token mk4c2e.q31myp7crqwk592u --discovery-token-ca-cert-hash sha256:24b848754ddea91ce50e9de1ec03e8f3b7e41f260d3e60944a6e68ddc9deddfc
   ```
 
+> 注意：kubeadm init生成的token有效期只有1天，如果你的node节点在使用kubeadm join时出现如下错误
+
+```
+[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+error execution phase preflight: unable to fetch the kubeadm-config ConfigMap: failed to get config map: Unauthorized
+```
+
+> 请到master上检查你所使用的token是否有效，kubeadm token list
+
+```
+# kubeadm token list
+```
+
+> 生成不过期的token
+
+```
+kubeadm token create --ttl 0 --print-join-command
+```
+```
+kubeadm join 192.168.83.131:6443 --token fpsz1o.bdwn7i4q8n4eulha     --discovery-token-ca-cert-hash sha256:24b848754ddea91ce50e9de1ec03e8f3b7e41f260d3e60944a6e68ddc9deddfc
+```
+
 - check
 
   ```
@@ -301,7 +324,7 @@ kubeadm join 192.168.83.131:6443 --token mk4c2e.q31myp7crqwk592u \
 - Prepare some container images
 
   + alpine:3.11
-  + node:12.14.0-alpine
+  + node:12.14.1-alpine
   + nginx:1.17.6-alpine
   + postgres:12.1-alpine
 
