@@ -249,6 +249,12 @@ psql -U postgres -d postgres
 [root@ ~]# node -v
 ```
 
+可以使用国内镜像
+
+```
+[root@ ~]# wget https://npm.taobao.org/mirrors/node/v12.14.0/node-v12.14.0-linux-x64.tar.gz
+```
+
 > install wget in case it is not installed
 
 ```
@@ -285,4 +291,10 @@ export PATH=$NODE_PATH/bin:$PATH
 [root@ ~]# npm install -g gulp
 [root@ ~]# npm install -g cross-env
 [root@ ~]# npm install -g rimraf
+```
+
+可以使用淘宝镜像
+
+```
+npm install xxxx -g --registry=http://registry.npm.taobao.org
 ```
