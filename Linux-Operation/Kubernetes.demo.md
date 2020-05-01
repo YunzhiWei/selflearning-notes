@@ -112,6 +112,8 @@ docker pull alpine
 docker pull node:12.14.1-alpine
 docker pull nginx:1.17.6-alpine
 docker pull postgres:12.1-alpine
+docker pull redis:5.0.7-alpine
+docker pull rabbitmq:3.8.2-alpine
 ```
 
 - Docker Compose
