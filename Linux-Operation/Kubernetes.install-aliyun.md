@@ -513,3 +513,156 @@ kubectl get pods -n kube-system
 ```
 kubectl get nodes 
 ```
+
+# 准备镜像
+
+#### 镜像列表
+
+- registry.cn-hangzhou.aliyuncs.com/archellis/worker:0.0.1
+- registry.cn-hangzhou.aliyuncs.com/archellis/service:0.0.1
+- registry.cn-hangzhou.aliyuncs.com/archellis/frontend:0.0.1
+- rabbitmq:3.8.2-alpine
+- postgres:12.1-alpine
+- node:12.14.1-alpine
+- redis:5.0.7-alpine
+- nginx:1.17.6-alpine
+- busybox
+
+#### 命令 - 登录阿里云镜像服务
+
+```
+docker login -u [user name] -p [password] registry.cn-hangzhou.aliyuncs.com
+```
+
+> 可以参考阿里云镜像服务的命令行提示
+
+#### 命令 - 获取镜像
+
+```
+docker pull
+```
+
+# 安装 Git
+
+```
+yum install git
+```
+
+# 获取 Demo 脚本
+
+> git repo of dockerimages
+
+```
+git clone --depth=1 https://[user name]:[password]@github.com/YunzhiWei/dockerimages.git
+```
+
+# 测试 Nginx 容器服务
+
+> 注意阿里云 `ECS` 安全组的安全策略，需要打开 `80` 端口
+
+#### 启动 nginx 容器服务
+
+> 通过暴露 `80` 端口提供服务
+
+```
+kubectl create -f nginx-demo-port.yaml
+```
+
+#### 等待 nginx 容器服务 `ready`
+
+```
+kubectl get po
+```
+
+#### 检查 nginx 服务提供的 web page
+
+> 打开浏览器，输入 `http://[Worker Node 的 IP]:80`，可以看到页面
+
+> 打开浏览器，输入 `http://[url]`，可以看到页面（[url] 需要事先在 `hosts` 文件中配置正确）
+
+#### 停止 nginx 容器服务
+
+```
+kubectl delete -f nginx-demo-port.yaml
+```
+
+# 启动 Ingress 
+
+## Ingress Controller of Traefik
+
+> 切换到 `traefik` 目录
+
+#### Apply rbac role and role binding
+
+```
+# kubectl apply -f traefik-rbac.yaml
+# kubectl describe clusterrole traefik-ingress-controller -n kube-system
+```
+
+#### Apply daemonset
+
+```
+kubectl apply -f traefik-ds.yaml
+kubectl get all -n kube-system | grep traefik
+```
+
+## Nginx Deployment
+
+> 切换回 `demo` 目录
+
+```
+kubectl create -f nginx-demo-ingress.yaml 
+```
+
+```
+kubectl get po
+kubectl get deploy
+```
+
+## ClusterIP Service
+
+```
+kubectl expose deploy nginx-demo-dp --port 80
+```
+
+```
+kubectl get service
+```
+
+## Ingress Resource
+
+```
+kubectl create -f ingress-resource.yaml
+```
+
+```
+kubectl get ing
+kubectl get describe ing ingress-resource
+```
+
+> 打开浏览器，输入域名
+
+## Nginx Deployment & ClusterIP Service & Ingress Resource
+
+> 动态监测 `K8S` 集群状态
+
+```
+kubectl get all -o wide --all-namespaces
+watch !!
+```
+
+```
+kubectl create -f ingress-demo.yaml
+```
+
+> `ingress-demo.yaml` 中包含了：`nginx-demo-ingress.yaml` 和 `ingress-resource` 的内容，并且还包含了 `Cluster IP Service`
+
+```
+kubectl get po
+kubectl get deploy
+kubectl get service
+kubectl get ing
+kubectl get describe ing ingress-resource
+```
+
+> 打开浏览器，输入域名，可以访问页面；输入 IP 则不行 ！！！
