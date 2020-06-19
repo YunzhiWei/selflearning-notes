@@ -1,6 +1,7 @@
 # 参考
 
 [在 Kubernetes集群中 安装 KubeSphere2.1](https://kubesphere.com.cn/forum/d/1272-k8s-kubesphere2-1)
+[k8s apiserver证书添加新地址](https://zhuanlan.zhihu.com/p/93015122)
 
 # 环境概述
 
@@ -328,10 +329,10 @@ EOF
 
 > 安装 `kubeadm`、`kubelet`、`kubectl` (阿里云yum源会随官方更新最新版，因此指定版本)
 
-> 安装1.16.9版本
+> 安装1.18.4版本
 
 ```
-yum -y install kubelet-1.16.9 kubeadm-1.16.9 kubectl-1.16.9
+yum -y install kubelet-1.18.4 kubeadm-1.18.4 kubectl-1.18.4
 ```
 
 > 查看版本
@@ -339,7 +340,7 @@ yum -y install kubelet-1.16.9 kubeadm-1.16.9 kubectl-1.16.9
 ```
 kubeadm version
 
-kubeadm version: &version.Info{Major:"1", Minor:"16", GitVersion:"v1.16.9", GitCommit:"a17149e1a189050796ced469dbd78d380f2ed5ef", GitTreeState:"clean", BuildDate:"2020-04-16T11:42:30Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
+kubeadm version: &version.Info{Major:"1", Minor:"16", GitVersion:"v1.18.4", GitCommit:"a17149e1a189050796ced469dbd78d380f2ed5ef", GitTreeState:"clean", BuildDate:"2020-04-16T11:42:30Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
 ```
 
 > 设置`kubelet`开机自启
@@ -367,7 +368,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 cat <<EOF > ./kubeadm-config.yaml
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
-kubernetesVersion: v1.16.9	
+kubernetesVersion: v1.18.3
 imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
 
 #master地址
@@ -378,6 +379,15 @@ networking:
   #k8s容器组所在的网段
   podSubnet: "10.20.0.1/16"	
   dnsDomain: "cluster.local"
+
+# 为了让证书包含公网IP，从而允许从外网访问集群
+apiServer:
+  certSANs:       #填写所有kube-apiserver节点的hostname、IP、VIP
+  - k8s-m1        #请替换为hostname
+  - 47.95.33.159  #请替换为公网
+  - 172.17.64.150 #请替换为私网
+  - 10.96.0.1     #不要替换，此IP是API的集群地址，部分服务会用到
+
 EOF
 ```
 
@@ -388,7 +398,7 @@ EOF
 > `kubeadm init --config=kubeadm-config.yaml --upload-certs`
 
 ```
-#kubeadm init --config=kubeadm-config.yaml
+# kubeadm init --config=kubeadm-config.yaml
 
 ....
 
@@ -404,17 +414,18 @@ You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
   https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
-You can now join any number of control-plane nodes by copying certificate authorities 
+You can now join any number of control-plane nodes by copying certificate authorities
 and service account keys on each node and then running the following as root:
 
-  kubeadm join 172.17.64.150:6443 --token pih1e4.saa0i3imy6ht6d3v \
-    --discovery-token-ca-cert-hash sha256:3b0496c5fd23ddf38f4f0c147997911490434562d6d0ba4a9aa37ca40ba106c8 \
-    --control-plane 	  
+  kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
+    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf \
+    --control-plane 
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.17.64.150:6443 --token pih1e4.saa0i3imy6ht6d3v \
-    --discovery-token-ca-cert-hash sha256:3b0496c5fd23ddf38f4f0c147997911490434562d6d0ba4a9aa37ca40ba106c8 
+kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
+    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
+
 ```
 
 > ⚠️ 保存 token sha256
@@ -442,8 +453,8 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 > 这里需要用到2.2中初始化master最后生成的token和sha256值
 
 ```
-kubeadm join 172.17.64.150:6443 --token pih1e4.saa0i3imy6ht6d3v \
-    --discovery-token-ca-cert-hash sha256:3b0496c5fd23ddf38f4f0c147997911490434562d6d0ba4a9aa37ca40ba106c8
+kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
+    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
 
 ... ...
 
@@ -518,9 +529,9 @@ kubectl get nodes
 
 #### 镜像列表
 
-- registry.cn-hangzhou.aliyuncs.com/archellis/worker:0.0.1
-- registry.cn-hangzhou.aliyuncs.com/archellis/service:0.0.1
-- registry.cn-hangzhou.aliyuncs.com/archellis/frontend:0.0.1
+- registry.cn-beijing.aliyuncs.com/caskbank/worker:0.2.0-archellis
+- registry.cn-beijing.aliyuncs.com/caskbank/service:0.2.0-archellis
+- registry.cn-beijing.aliyuncs.com/caskbank/frontend:0.2.0-archellis
 - rabbitmq:3.8.2-alpine
 - postgres:12.1-alpine
 - node:12.14.1-alpine
@@ -532,6 +543,10 @@ kubectl get nodes
 
 ```
 docker login -u [user name] -p [password] registry.cn-hangzhou.aliyuncs.com
+```
+
+```
+sudo docker login --username=smcc9191 registry.cn-beijing.aliyuncs.com
 ```
 
 > 可以参考阿里云镜像服务的命令行提示
@@ -590,7 +605,7 @@ kubectl delete -f nginx-demo-port.yaml
 
 ## Ingress Controller of Traefik
 
-> 切换到 `traefik` 目录
+> 切换到 `architecture/traefik` 目录
 
 #### Apply rbac role and role binding
 
