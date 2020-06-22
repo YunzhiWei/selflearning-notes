@@ -1,14 +1,13 @@
 # 参考
 
-[在 Kubernetes集群中 安装 KubeSphere2.1](https://kubesphere.com.cn/forum/d/1272-k8s-kubesphere2-1)
-[k8s apiserver证书添加新地址](https://zhuanlan.zhihu.com/p/93015122)
+复制了文件：Kubernetes.install-aliyun.md
 
 # 环境概述
 
 - 阿里云 ECS (2C 8G) x2
 - CentOS 7.8
-- xxx.xxx.xxx.150: k8s-m1 (master)
-- xxx.xxx.xxx.151: k8s-w1 (worker)
+- xxx.xxx.xxx.146(xxx.xxx.xxx.208): k8s-m1 (master)
+- xxx.xxx.xxx.169(xxx.xxx.xxx.209): k8s-w1 (worker)
 
 # 准备工作
 
@@ -44,8 +43,8 @@ CentOS Linux release 7.8.2003 (Core)
 ```
 
 ```
-xxx.xxx.xxx.150 k8s-m1
-xxx.xxx.xxx.151 k8s-w1
+172.16.113.208 k8s-m1
+172.16.113.209 k8s-w1
 ```
 
 #### 禁用`防火墙`
@@ -372,7 +371,7 @@ kubernetesVersion: v1.18.3
 imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
 
 #master地址
-controlPlaneEndpoint: "172.17.64.150:6443"	
+controlPlaneEndpoint: "172.16.113.208:6443"	
 networking:
   serviceSubnet: "10.96.0.0/16"	
 
@@ -384,8 +383,8 @@ networking:
 apiServer:
   certSANs:       #填写所有kube-apiserver节点的hostname、IP、VIP
   - k8s-m1        #请替换为hostname
-  - 47.95.33.159  #请替换为公网
-  - 172.17.64.150 #请替换为私网
+  - 101.37.163.146  #请替换为公网
+  - 172.16.113.208  #请替换为私网
   - 10.96.0.1     #不要替换，此IP是API的集群地址，部分服务会用到
 
 EOF
@@ -417,14 +416,14 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of control-plane nodes by copying certificate authorities
 and service account keys on each node and then running the following as root:
 
-  kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf \
+  kubeadm join 172.16.113.208:6443 --token rpcecr.wj8af6n5siwr9nw5 \
+    --discovery-token-ca-cert-hash sha256:3ffae72e660dc5be3588fcaee74f808b8a2b51eb2777a16b9124a4ca11684b2a \
     --control-plane 
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
+kubeadm join 172.16.113.208:6443 --token rpcecr.wj8af6n5siwr9nw5 \
+    --discovery-token-ca-cert-hash sha256:3ffae72e660dc5be3588fcaee74f808b8a2b51eb2777a16b9124a4ca11684b2a 
 
 ```
 
@@ -453,8 +452,8 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 > 这里需要用到2.2中初始化master最后生成的token和sha256值
 
 ```
-kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
+kubeadm join 172.16.113.208:6443 --token rpcecr.wj8af6n5siwr9nw5 \
+    --discovery-token-ca-cert-hash sha256:3ffae72e660dc5be3588fcaee74f808b8a2b51eb2777a16b9124a4ca11684b2a 
 
 ... ...
 
@@ -501,7 +500,7 @@ kubectl get nodes
 wget https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 ```
 
-> 因为在上边kubeadm-config.yaml配置文件中指定了容器组IP，所以需要将文件中的625行改为如下：
+> 因为在上边kubeadm-config.yaml配置文件中指定了容器组IP，所以需要将文件中的`625`行改为如下：
 
 ```
 value: "10.20.0.1/16"
@@ -590,36 +589,6 @@ yum install git
 git clone --depth=1 https://[user name]:[password]@github.com/YunzhiWei/dockerimages.git
 ```
 
-# 测试 Nginx 容器服务
-
-> 注意阿里云 `ECS` 安全组的安全策略，需要打开 `80` 端口
-
-#### 启动 nginx 容器服务
-
-> 通过暴露 `80` 端口提供服务
-
-```
-kubectl create -f nginx-demo-port.yaml
-```
-
-#### 等待 nginx 容器服务 `ready`
-
-```
-kubectl get po
-```
-
-#### 检查 nginx 服务提供的 web page
-
-> 打开浏览器，输入 `http://[Worker Node 的 IP]:80`，可以看到页面
-
-> 打开浏览器，输入 `http://[url]`，可以看到页面（[url] 需要事先在 `hosts` 文件中配置正确）
-
-#### 停止 nginx 容器服务
-
-```
-kubectl delete -f nginx-demo-port.yaml
-```
-
 # 启动 Ingress 
 
 ## Ingress Controller of Traefik
@@ -639,64 +608,3 @@ kubectl delete -f nginx-demo-port.yaml
 kubectl apply -f traefik-ds.yaml
 kubectl get all -n kube-system | grep traefik
 ```
-
-## Nginx Deployment
-
-> 切换回 `demo` 目录
-
-```
-kubectl create -f nginx-demo-ingress.yaml 
-```
-
-```
-kubectl get po
-kubectl get deploy
-```
-
-## ClusterIP Service
-
-```
-kubectl expose deploy nginx-demo-dp --port 80
-```
-
-```
-kubectl get service
-```
-
-## Ingress Resource
-
-```
-kubectl create -f ingress-resource.yaml
-```
-
-```
-kubectl get ing
-kubectl get describe ing ingress-resource
-```
-
-> 打开浏览器，输入域名
-
-## Nginx Deployment & ClusterIP Service & Ingress Resource
-
-> 动态监测 `K8S` 集群状态
-
-```
-kubectl get all -o wide --all-namespaces
-watch !!
-```
-
-```
-kubectl create -f ingress-demo.yaml
-```
-
-> `ingress-demo.yaml` 中包含了：`nginx-demo-ingress.yaml` 和 `ingress-resource` 的内容，并且还包含了 `Cluster IP Service`
-
-```
-kubectl get po
-kubectl get deploy
-kubectl get service
-kubectl get ing
-kubectl get describe ing ingress-resource
-```
-
-> 打开浏览器，输入域名，可以访问页面；输入 IP 则不行 ！！！
