@@ -5,10 +5,10 @@
 
 # 环境概述
 
-- 阿里云 ECS (2C 8G) x2
+- 阿里云 (smcc) ECS (2C 8G) x2
 - CentOS 7.8
-- xxx.xxx.xxx.150: k8s-m1 (master)
-- xxx.xxx.xxx.151: k8s-w1 (worker)
+- 101.xxx.xxx.52 (xxx.xxx.xxx.150): k8s-m1 (master)
+-  47.xxx.xxx.33 (xxx.xxx.xxx.151): k8s-w1 (worker)
 
 # 准备工作
 
@@ -384,8 +384,8 @@ networking:
 apiServer:
   certSANs:       #填写所有kube-apiserver节点的hostname、IP、VIP
   - k8s-m1        #请替换为hostname
-  - 47.95.33.159  #请替换为公网
-  - 172.17.64.150 #请替换为私网
+  - 101.201.103.52  #请替换为公网
+  - 172.17.64.150   #请替换为私网
   - 10.96.0.1     #不要替换，此IP是API的集群地址，部分服务会用到
 
 EOF
@@ -417,14 +417,14 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of control-plane nodes by copying certificate authorities
 and service account keys on each node and then running the following as root:
 
-  kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf \
+  kubeadm join 172.17.64.150:6443 --token 53rx8h.vgrjig2sdb77c46k \
+    --discovery-token-ca-cert-hash sha256:710caac15e20c75951895059d72feb372f730fb72e4716f110485b88296c045c \
     --control-plane 
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
+kubeadm join 172.17.64.150:6443 --token 53rx8h.vgrjig2sdb77c46k \
+    --discovery-token-ca-cert-hash sha256:710caac15e20c75951895059d72feb372f730fb72e4716f110485b88296c045c 
 
 ```
 
@@ -453,8 +453,8 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 > 这里需要用到2.2中初始化master最后生成的token和sha256值
 
 ```
-kubeadm join 172.17.64.150:6443 --token ykas96.el7j6myqr38i869k \
-    --discovery-token-ca-cert-hash sha256:d417b9f49aa793e0b84c9e7fcf6efa21dedfdaa6fa426cdf4d7ff961d9fe66cf 
+kubeadm join 172.17.64.150:6443 --token 53rx8h.vgrjig2sdb77c46k \
+    --discovery-token-ca-cert-hash sha256:710caac15e20c75951895059d72feb372f730fb72e4716f110485b88296c045c 
 
 ... ...
 
@@ -501,7 +501,7 @@ kubectl get nodes
 wget https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 ```
 
-> 因为在上边kubeadm-config.yaml配置文件中指定了容器组IP，所以需要将文件中的625行改为如下：
+> 因为在上边`kubeadm-config.yaml`配置文件中指定了容器组IP，所以需要将文件中的`625`行改为如下：
 
 ```
 value: "10.20.0.1/16"
@@ -547,9 +547,9 @@ cat ~/.kube/config
 
 #### 镜像列表
 
-- registry.cn-beijing.aliyuncs.com/caskbank/worker:0.2.0-archellis
-- registry.cn-beijing.aliyuncs.com/caskbank/service:0.2.0-archellis
-- registry.cn-beijing.aliyuncs.com/caskbank/frontend:0.2.0-archellis
+- registry.cn-beijing.aliyuncs.com/caskbank/worker:0.4.1-archellis
+- registry.cn-beijing.aliyuncs.com/caskbank/service:0.4.1-archellis
+- registry.cn-beijing.aliyuncs.com/caskbank/frontend:0.4.1-archellis
 - rabbitmq:3.8.2-alpine
 - postgres:12.1-alpine
 - node:12.14.1-alpine

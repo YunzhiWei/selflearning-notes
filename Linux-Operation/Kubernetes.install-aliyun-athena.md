@@ -4,7 +4,7 @@
 
 # 环境概述
 
-- 阿里云 ECS (2C 8G) x2
+- 阿里云 (athena) ECS (2C 8G) x2
 - CentOS 7.8
 - xxx.xxx.xxx.146(xxx.xxx.xxx.208): k8s-m1 (master)
 - xxx.xxx.xxx.169(xxx.xxx.xxx.209): k8s-w1 (worker)
