@@ -605,6 +605,6 @@ git clone --depth=1 https://[user name]:[password]@github.com/YunzhiWei/dockerim
 #### Apply daemonset
 
 ```
-kubectl apply -f traefik-ds.yaml
+kubectl apply -f traefik-ds-http.yaml
 kubectl get all -n kube-system | grep traefik
 ```

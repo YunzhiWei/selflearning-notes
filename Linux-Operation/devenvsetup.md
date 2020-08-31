@@ -696,19 +696,19 @@ C:\Program Files\PostgreSQL\9.6\data
 3. download and install npm binary pakage
 
 ```
-[root@ ~]# wget https://nodejs.org/dist/v8.9.4/node-v8.9.4-linux-x64.tar.xz
+[root@ ~]# wget https://nodejs.org/dist/v12.14.1/node-v12.14.1-linux-x64.tar.xz
 
-[root@ ~]# tar -xvf node-v8.9.4-linux-x64.tar.xz
+[root@ ~]# tar -xvf node-v12.14.1-linux-x64.tar.xz
 
-[root@ ~]# ln -s ~/node-v8.9.4-linux-x64/bin/node /usr/bin/node
+[root@ ~]# ln -s ~/node-v12.14.1-linux-x64/bin/node /usr/bin/node
 
-[root@ ~]# ln -s ~/node-v8.9.4-linux-x64/bin/npm /usr/bin/npm
+[root@ ~]# ln -s ~/node-v12.14.1-linux-x64/bin/npm /usr/bin/npm
 
 [root@ ~]# npm
 [root@ ~]# node
 
 [root@ ~]# vim /etc/profile
-export NODE_PATH="/root/node-v8.9.4-linux-x64"
+export NODE_PATH="/root/node-v12.14.1-linux-x64"
 export PATH=$NODE_PATH/bin:$PATH
 ```
 
