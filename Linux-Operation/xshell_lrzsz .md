@@ -13,8 +13,14 @@
 ```
 [root@.... ~]# rpm -qa |grep lrzsz
 
-3. 上传文件
+3. 上传文件（上传到 Linux）
 
 ```
 [root@.... ~]# rz
+```
+
+4. 下载文件（下载到 XShell）
+
+```
+[root@.... ~]# sz [filename]
 ```
